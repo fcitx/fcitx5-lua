@@ -95,6 +95,9 @@ public:
 private:
     InputContext *currentInputContext() { return inputContext_.get(); }
 
+    DEFINE_LUA_FUNCTION(version);
+    DEFINE_LUA_FUNCTION(lastCommit);
+    DEFINE_LUA_FUNCTION(splitString);
     DEFINE_LUA_FUNCTION(log);
     DEFINE_LUA_FUNCTION(watchEvent);
     DEFINE_LUA_FUNCTION(unwatchEvent);
@@ -105,7 +108,12 @@ private:
     DEFINE_LUA_FUNCTION(removeQuickPhraseHandler);
     DEFINE_LUA_FUNCTION(commitString);
     DEFINE_LUA_FUNCTION(standardPathLocate);
+    DEFINE_LUA_FUNCTION(UTF16ToUTF8)
+    DEFINE_LUA_FUNCTION(UTF8ToUTF16)
 
+    std::tuple<std::string> versionImpl() { return Instance::version(); }
+
+    std::tuple<std::string> lastCommitImpl() { return lastCommit_; }
     std::tuple<> logImpl(const char *msg);
     std::tuple<int> watchEventImpl(const char *event, const char *function);
     std::tuple<> unwatchEventImpl(int id);
@@ -116,6 +124,14 @@ private:
 
     std::tuple<int> addQuickPhraseHandlerImpl(const char *function);
     std::tuple<> removeQuickPhraseHandlerImpl(int id);
+
+    std::tuple<std::vector<std::string>> splitStringImpl(const char *str,
+                                                         const char *delim) {
+        return stringutils::split(str, delim);
+    }
+
+    std::tuple<std::string> UTF8ToUTF16Impl(const char *str);
+    std::tuple<std::string> UTF16ToUTF8Impl(const char *str);
 
     std::tuple<std::vector<std::string>>
     standardPathLocateImpl(int type, const char *name, const char *suffix);
@@ -135,8 +151,10 @@ private:
 
     std::unique_ptr<HandlerTableEntry<QuickPhraseProviderCallback>>
         quickphraseCallback_;
+    std::unique_ptr<HandlerTableEntry<EventHandler>> commitHandler_;
 
     int currentId_ = 0;
+    std::string lastCommit_;
 };
 
 } // namespace fcitx

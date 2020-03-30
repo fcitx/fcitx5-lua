@@ -35,6 +35,8 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         FCITX_ASSERT(luaaddonloader);
         auto luaaddon = instance->addonManager().addon("testlua");
         FCITX_ASSERT(luaaddon);
+        auto imeapi = instance->addonManager().addon("imeapi");
+        FCITX_ASSERT(imeapi);
     });
     dispatcher->schedule([dispatcher, instance]() {
         instance->inputMethodManager().currentGroup();

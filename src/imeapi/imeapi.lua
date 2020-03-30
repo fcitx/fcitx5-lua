@@ -1,5 +1,6 @@
 local fcitx = require("fcitx")
 
+-- ime need to be global.
 ime = {}
 
 local state = {}
@@ -127,9 +128,67 @@ function ime.register_converter(lua_function_name, description)
     fcitx.addConverter(lua_function_name)
 end
 
-files = fcitx.standardPathLocate(fcitx.StandardPath.PkgData, "lua/imeapi/extensions", ".lua")
+function ime.get_version()
+    return fcitx.version()
+end
+
+function ime.get_last_commit()
+    return fcitx.lastCommit()
+end
+
+function ime.int_to_hex_string(value, width)
+    if width == nil then
+        width = 0
+    end
+    local result = string.format("%x", value)
+    return string.rep("0", width - #result) .. result
+end
+
+function ime.join_string(str_list, sep)
+    return table.concat(str_list, sep)
+end
+
+function ime.parse_mapping (src_string, line_sep, key_value_sep, values_sep)
+    local mapping = {}
+    for _, line in ipairs(ime.split_string(src_string, line_sep)) do
+        local kv = ime.split_string(line, key_value_sep)
+        if #kv == 2 then
+            mapping[kv[1]] = ime.split_string(kv[2], values_sep)
+        end
+    end
+    return mapping
+end
+
+function ime.split_string(str, sep)
+    return fcitx.splitString(str, sep)
+end
+
+function ime.trim_string(s)
+    return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
+function ime.trim_string_left(s)
+    return (s:gsub("^%s*", ""))
+end
+
+function ime.trim_string_right(s)
+    local n = #s
+    while n > 0 and s:find("^%s", n) do n = n - 1 end
+    return s:sub(1, n)
+end
+
+function ime.utf8_to_utf16 (str)
+    return fcitx.UTF8ToUTF16(str)
+end
+
+function ime.utf16_to_utf8 (str)
+    return fcitx.UTF16ToUTF8(str)
+end
+
+-- Load extensions.
+local files = fcitx.standardPathLocate(fcitx.StandardPath.PkgData, "lua/imeapi/extensions", ".lua")
 for _, file in ipairs(files) do
     fcitx.log("Loading imeapi extension: " .. file)
-    f = assert(loadfile(file))
+    local f = assert(loadfile(file))
     f()
 end

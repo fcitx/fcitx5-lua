@@ -19,6 +19,7 @@
 #include "luaaddonstate.h"
 #include "baselua.h"
 #include <fcitx-utils/standardpath.h>
+#include <fcitx-utils/utf8.h>
 #include <fcitx/addonmanager.h>
 #include <fcntl.h>
 
@@ -73,7 +74,10 @@ LuaAddonState::LuaAddonState(const std::string &name,
     luaL_openlibs(*this);
     auto open_fcitx_core = [](lua_State *state) {
         static const luaL_Reg fcitxlib[] = {
+            {"version", &LuaAddonState::version},
+            {"lastCommit", &LuaAddonState::lastCommit},
             {"log", &LuaAddonState::log},
+            {"splitString", &LuaAddonState::splitString},
             {"watchEvent", &LuaAddonState::watchEvent},
             {"unwatchEvent", &LuaAddonState::unwatchEvent},
             {"currentInputMethod", &LuaAddonState::currentInputMethod},
@@ -83,6 +87,8 @@ LuaAddonState::LuaAddonState(const std::string &name,
             {"removeQuickPhraseHandler",
              &LuaAddonState::removeQuickPhraseHandler},
             {"standardPathLocate", &LuaAddonState::standardPathLocate},
+            {"UTF16ToUTF8", &LuaAddonState::UTF16ToUTF8},
+            {"UTF8ToUTF16", &LuaAddonState::UTF8ToUTF16},
         };
         luaL_newlib(state, fcitxlib);
         return 1;
@@ -112,6 +118,13 @@ LuaAddonState::LuaAddonState(const std::string &name,
         LuaPrintError(*this);
         throw std::runtime_error("Failed to run lua source.");
     }
+
+    commitHandler_ = instance_->watchEvent(
+        EventType::InputContextCommitString, EventWatcherPhase::PreInputMethod,
+        [this](Event &event) {
+            auto &commitEvent = static_cast<CommitStringEvent &>(event);
+            lastCommit_ = commitEvent.text();
+        });
 }
 
 std::tuple<> LuaAddonState::logImpl(const char *msg) {
@@ -326,3 +339,54 @@ LuaAddonState::standardPathLocateImpl(int type, const char *path,
 }
 
 } // namespace fcitx
+
+std::tuple<std::string> fcitx::LuaAddonState::UTF16ToUTF8Impl(const char *str) {
+    auto len = strlen(str);
+    if (len % 2 != 0) {
+        return {};
+    }
+    len /= 2;
+    std::string result;
+    auto data = reinterpret_cast<const uint16_t *>(str);
+    size_t i = 0;
+    while (i < len) {
+        uint32_t ucs4 = 0;
+        if (data[i] < 0xD800 || data[i] > 0xDFFF) {
+            ucs4 = data[i];
+            i += 1;
+        } else if (0xD800 <= data[i] && data[i] <= 0xDBFF) {
+            if (i + 1 >= len) {
+                return {};
+            }
+            if (0xDC00 <= data[i + 1] && data[i + 1] <= 0xDFFF) {
+                /* We have a valid surrogate pair.  */
+                ucs4 = (((data[i] & 0x3FF) << 10) | (data[i + 1] & 0x3FF)) +
+                       (1 << 16);
+                i += 2;
+            }
+        }
+        result.append(utf8::UCS4ToUTF8(ucs4));
+    }
+    return result;
+}
+
+std::tuple<std::string> fcitx::LuaAddonState::UTF8ToUTF16Impl(const char *str) {
+    std::string s(str);
+    if (!utf8::validate(s)) {
+        return {};
+    }
+    std::vector<uint16_t> result;
+    for (const auto ucs4 : utf8::MakeUTF8CharRange(s)) {
+        if (ucs4 < 0x10000) {
+            result.push_back(static_cast<uint16_t>(ucs4));
+        } else if (ucs4 < 0x110000) {
+            result.push_back(0xD800 | (((ucs4 >> 16) & 0x1f) - 1) |
+                             (ucs4 >> 10));
+            result.push_back(0xDC00 | (ucs4 & 0x3ff));
+        } else {
+            return {};
+        }
+    }
+    result.push_back(0);
+    return std::string(reinterpret_cast<char *>(result.data()));
+}
