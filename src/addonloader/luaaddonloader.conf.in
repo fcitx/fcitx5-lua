@@ -1,0 +1,12 @@
+[Addon]
+Name=Lua Addon Loader
+Comment=Lua Addon support
+Category=Module
+Type=SharedLibrary
+OnDemand=True
+Configurable=False
+Library=luaaddonloader
+
+[Addon/OptionalDependencies]
+0=quickphrase
+

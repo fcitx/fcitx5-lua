@@ -1,0 +1,11 @@
+[Addon]
+Name=Lua IME API
+Comment=Lua IME API support
+Category=Module
+Type=Lua
+OnDemand=False
+Configurable=False
+Library=imeapi.lua
+
+[Addon/Dependencies]
+0=luaaddonloader
