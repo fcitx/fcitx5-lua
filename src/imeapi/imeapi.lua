@@ -31,7 +31,8 @@ local function checkInputStringMatches(input, input_trigger_strings)
     return false
 end
 
-local function callImeApiCallback(fcitx_result, func, leading, input)
+local function callImeApiCallback(fcitx_result, func, input, leading)
+    -- Append ime api callback result to fcitx result.
     fcitx.log("quickphrase call " .. func)
     local result = fcitx.call_by_name(func, input)
     if type(result) == 'table' then
@@ -83,13 +84,13 @@ function handleQuickPhrase(input)
     if #input >= 2 and commands[command] ~= nil then
         -- Prevent future handling.
         local fcitx_result = {{"", "", fcitx.QuickPhraseAction.Break}}
-        callImeApiCallback(fcitx_result, commands[command].func, commands[command].leading, string.sub(input, 3))
+        callImeApiCallback(fcitx_result, commands[command].func, string.sub(input, 3), commands[command].leading)
         return fcitx_result
     end
     local fcitx_result = {}
     for _, trigger in ipairs(triggers) do
         if checkInputStringMatches(input, trigger.input_trigger_strings) then
-            callImeApiCallback(fcitx_result, trigger.func, nil, input)
+            callImeApiCallback(fcitx_result, trigger.func, input)
         end
     end
     return fcitx_result
