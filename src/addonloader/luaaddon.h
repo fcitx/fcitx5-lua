@@ -18,6 +18,7 @@
 #ifndef _FCITX5_LUA_ADDONLOADER_LUAADDON_H_
 #define _FCITX5_LUA_ADDONLOADER_LUAADDON_H_
 
+#include "luaaddon_public.h"
 #include "luaaddonstate.h"
 #include "luahelper.h"
 #include <fcitx/addoninfo.h>
@@ -36,6 +37,10 @@ public:
     void reloadConfig() override;
 
 private:
+    RawConfig invokeLuaFunction(const std::string &name,
+                                const RawConfig &config);
+    FCITX_ADDON_EXPORT_FUNCTION(LuaAddon, invokeLuaFunction);
+
     Instance *instance_;
     const std::string name_;
     const std::string library_;

@@ -17,3 +17,20 @@ function convert(str)
     str = string.gsub(str, "([abc])", string.upper)
     return str
 end
+
+function testInvoke(config)
+    if type(config) == "string" then
+        assert(config == "ABC")
+        return "DEF"
+    end
+    print(fcitx.dump(config))
+    config["B"] = {
+        C = "5",
+        D = "6",
+        E = {
+            F = "7",
+            G = "8",
+        }
+    }
+    return config
+end

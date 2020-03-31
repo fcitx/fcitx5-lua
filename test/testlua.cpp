@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+#include "luaaddon_public.h"
 #include "testdir.h"
 #include "testfrontend_public.h"
 #include "testim_public.h"
@@ -40,7 +41,6 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
     });
     dispatcher->schedule([dispatcher, instance]() {
         instance->inputMethodManager().currentGroup();
-        ;
         auto testfrontend = instance->addonManager().addon("testfrontend");
         auto testim = instance->addonManager().addon("testim");
         testim->call<ITestIM::setHandler>(
@@ -64,6 +64,24 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         testfrontend->call<ITestFrontend::keyEvent>(uuid, Key("Control+space"),
                                                     false);
         testfrontend->call<ITestFrontend::destroyInputContext>(uuid);
+
+        auto luaaddon = instance->addonManager().addon("testlua");
+        FCITX_ASSERT(luaaddon);
+        RawConfig config;
+        config["A"].setValue("5");
+        config["A"]["Q"].setValue("4");
+        FCITX_INFO() << config;
+        auto ret =
+            luaaddon->call<ILuaAddon::invokeLuaFunction>("testInvoke", config);
+        FCITX_INFO() << ret;
+        assert(ret["B"]["E"]["F"].value() == "7");
+        RawConfig strConfig;
+        strConfig.setValue("ABC");
+        ret = luaaddon->call<ILuaAddon::invokeLuaFunction>("testInvoke",
+                                                           strConfig);
+        assert(ret.value() == "DEF");
+        FCITX_INFO() << ret;
+
         dispatcher->detach();
         instance->exit();
     });

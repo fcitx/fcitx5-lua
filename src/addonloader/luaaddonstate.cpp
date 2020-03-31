@@ -164,7 +164,7 @@ std::tuple<int> LuaAddonState::watchEventImpl(const char *event,
             if (rv != 0) {
                 LuaPError(rv, "lua_pcall() failed");
                 LuaPrintError(*this);
-            } else if (lua_gettop(*this) == 1) {
+            } else if (lua_gettop(*this) >= 1) {
                 auto b = lua_toboolean(*this, -1);
                 if (b) {
                     keyEvent.filterAndAccept();
@@ -211,7 +211,7 @@ std::tuple<int> LuaAddonState::addConverterImpl(const char *function) {
                     if (rv != 0) {
                         LuaPError(rv, "lua_pcall() failed");
                         LuaPrintError(*this);
-                    } else if (lua_gettop(*this) == 1) {
+                    } else if (lua_gettop(*this) >= 1) {
                         auto s = lua_tostring(*this, -1);
                         if (s) {
                             orig = s;
@@ -338,9 +338,7 @@ LuaAddonState::standardPathLocateImpl(int type, const char *path,
     return {std::move(result)};
 }
 
-} // namespace fcitx
-
-std::tuple<std::string> fcitx::LuaAddonState::UTF16ToUTF8Impl(const char *str) {
+std::tuple<std::string> LuaAddonState::UTF16ToUTF8Impl(const char *str) {
     auto len = strlen(str);
     if (len % 2 != 0) {
         return {};
@@ -370,7 +368,7 @@ std::tuple<std::string> fcitx::LuaAddonState::UTF16ToUTF8Impl(const char *str) {
     return result;
 }
 
-std::tuple<std::string> fcitx::LuaAddonState::UTF8ToUTF16Impl(const char *str) {
+std::tuple<std::string> LuaAddonState::UTF8ToUTF16Impl(const char *str) {
     std::string s(str);
     if (!utf8::validate(s)) {
         return {};
@@ -390,3 +388,72 @@ std::tuple<std::string> fcitx::LuaAddonState::UTF8ToUTF16Impl(const char *str) {
     result.push_back(0);
     return std::string(reinterpret_cast<char *>(result.data()));
 }
+
+void rawConfigToLua(lua_State *state, const RawConfig &config) {
+    if (!config.hasSubItems()) {
+        lua_pushstring(state, config.value().data());
+        return;
+    }
+
+    lua_newtable(state);
+    if (!config.value().empty()) {
+        lua_pushstring(state, "");
+        lua_pushstring(state, config.value().data());
+        lua_rawset(state, -3);
+    }
+    if (config.hasSubItems()) {
+        auto options = config.subItems();
+        for (auto &option : options) {
+            auto subConfig = config.get(option);
+            lua_pushstring(state, option.data());
+            rawConfigToLua(state, *subConfig);
+            lua_rawset(state, -3);
+        }
+    }
+}
+
+void luaToRawConfig(lua_State *state, RawConfig &config) {
+    int type = lua_type(state, -1);
+    if (type == LUA_TSTRING) {
+        if (auto str = lua_tostring(state, -1)) {
+            config.setValue(str);
+        }
+        return;
+    }
+
+    if (type == LUA_TTABLE) {
+        /* table is in the stack at index 't' */
+        lua_pushnil(state); /* first key */
+        while (lua_next(state, -2) != 0) {
+            if (lua_type(state, -2) == LUA_TSTRING) {
+                if (auto str = lua_tostring(state, -2)) {
+                    if (str[0]) {
+                        luaToRawConfig(state, config[str]);
+                    } else if (lua_type(state, -1) == LUA_TSTRING) {
+                        luaToRawConfig(state, config);
+                    }
+                }
+            }
+            lua_pop(state, 1);
+        }
+    }
+}
+
+RawConfig LuaAddonState::invokeLuaFunction(const std::string &name,
+                                           const RawConfig &config) {
+    lua_getglobal(*this, name.data());
+    rawConfigToLua(*this, config);
+    int rv = lua_pcall(*this, 1, 1, 0);
+    RawConfig ret;
+    if (rv != 0) {
+        LuaPError(rv, "lua_pcall() failed");
+        LuaPrintError(*this);
+    } else if (lua_gettop(*this) >= 1) {
+        luaToRawConfig(*this, ret);
+    }
+
+    lua_pop(*this, lua_gettop(*this));
+    return ret;
+}
+
+} // namespace fcitx

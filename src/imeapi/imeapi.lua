@@ -96,6 +96,28 @@ function handleQuickPhrase(input)
     return fcitx_result
 end
 
+function candidateTrigger(input)
+    if type(input) ~= "string" then
+        return nil
+    end
+    fcitx_result = {}
+    for _, trigger in ipairs(triggers) do
+        if checkInputStringMatches(input, trigger.candidate_trigger_strings) then
+            callImeApiCallback(fcitx_result, trigger.func, input)
+        end
+    end
+    result = {}
+    count = 0
+    for _, cand in ipairs(fcitx_result) do
+        if cand[3] == fcitx.QuickPhraseAction.Commit then
+            result[tostring(count)] = cand[1]
+            count = count + 1
+        end
+    end
+    result.Length = tostring(count)
+    return result
+end
+
 local function registerQuickPhrase()
     if state.quickphrase == nil then
         state.quickphrase = fcitx.addQuickPhraseHandler("handleQuickPhrase")
