@@ -235,7 +235,9 @@ std::tuple<> LuaAddonState::commitStringImpl(const char *str) {
 }
 
 bool LuaAddonState::handleQuickPhrase(
-    const std::string &input, const QuickPhraseAddCandidateCallback &callback) {
+    InputContext *ic, const std::string &input,
+    const QuickPhraseAddCandidateCallback &callback) {
+    ScopedICSetter setter(inputContext_, ic->watch());
     bool flag = true;
     for (auto iter = quickphraseHandler_.begin(),
               end = quickphraseHandler_.end();
@@ -309,9 +311,9 @@ std::tuple<int> LuaAddonState::addQuickPhraseHandlerImpl(const char *function) {
     quickphraseHandler_.emplace(newId, function);
     if (!quickphraseCallback_) {
         quickphraseCallback_ = quickphrase()->call<IQuickPhrase::addProvider>(
-            [this](const std::string &input,
+            [this](InputContext *ic, const std::string &input,
                    QuickPhraseAddCandidateCallback callback) {
-                return handleQuickPhrase(input, callback);
+                return handleQuickPhrase(ic, input, callback);
             });
     }
     return {newId};

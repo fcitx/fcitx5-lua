@@ -142,7 +142,7 @@ private:
     std::tuple<> commitStringImpl(const char *str);
     FCITX_ADDON_DEPENDENCY_LOADER(quickphrase, instance_->addonManager());
 
-    bool handleQuickPhrase(const std::string &input,
+    bool handleQuickPhrase(InputContext *ic, const std::string &input,
                            const QuickPhraseAddCandidateCallback &callback);
     Instance *instance_;
     std::unique_ptr<lua_State, decltype(&lua_close)> state_;
