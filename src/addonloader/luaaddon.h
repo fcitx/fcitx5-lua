@@ -37,7 +37,7 @@ public:
     void reloadConfig() override;
 
 private:
-    RawConfig invokeLuaFunction(const std::string &name,
+    RawConfig invokeLuaFunction(InputContext *ic, const std::string &name,
                                 const RawConfig &config);
     FCITX_ADDON_EXPORT_FUNCTION(LuaAddon, invokeLuaFunction);
 

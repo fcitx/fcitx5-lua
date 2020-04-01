@@ -439,8 +439,10 @@ void luaToRawConfig(lua_State *state, RawConfig &config) {
     }
 }
 
-RawConfig LuaAddonState::invokeLuaFunction(const std::string &name,
+RawConfig LuaAddonState::invokeLuaFunction(InputContext *ic,
+                                           const std::string &name,
                                            const RawConfig &config) {
+    ScopedICSetter setter(inputContext_, ic->watch());
     lua_getglobal(*this, name.data());
     rawConfigToLua(*this, config);
     int rv = lua_pcall(*this, 1, 1, 0);

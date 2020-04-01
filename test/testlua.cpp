@@ -71,14 +71,14 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         config["A"].setValue("5");
         config["A"]["Q"].setValue("4");
         FCITX_INFO() << config;
-        auto ret =
-            luaaddon->call<ILuaAddon::invokeLuaFunction>("testInvoke", config);
+        auto ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(
+            nullptr, "testInvoke", config);
         FCITX_INFO() << ret;
         assert(ret["B"]["E"]["F"].value() == "7");
         RawConfig strConfig;
         strConfig.setValue("ABC");
-        ret = luaaddon->call<ILuaAddon::invokeLuaFunction>("testInvoke",
-                                                           strConfig);
+        ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(
+            nullptr, "testInvoke", strConfig);
         assert(ret.value() == "DEF");
         FCITX_INFO() << ret;
 

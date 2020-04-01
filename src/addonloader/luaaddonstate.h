@@ -92,7 +92,7 @@ public:
 
     operator lua_State *() { return state_.get(); }
 
-    RawConfig invokeLuaFunction(const std::string &name,
+    RawConfig invokeLuaFunction(InputContext *ic, const std::string &name,
                                 const RawConfig &config);
 
 private:

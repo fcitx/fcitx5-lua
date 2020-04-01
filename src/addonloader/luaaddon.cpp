@@ -36,9 +36,9 @@ void fcitx::LuaAddon::reloadConfig() {
 }
 
 fcitx::RawConfig
-fcitx::LuaAddon::invokeLuaFunction(const std::string &name,
+fcitx::LuaAddon::invokeLuaFunction(InputContext *ic, const std::string &name,
                                    const fcitx::RawConfig &config) {
-    return state_->invokeLuaFunction(name, config);
+    return state_->invokeLuaFunction(ic, name, config);
 }
 
 } // namespace fcitx

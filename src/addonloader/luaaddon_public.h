@@ -22,11 +22,13 @@
 #include <fcitx-config/rawconfig.h>
 #include <fcitx-utils/metastring.h>
 #include <fcitx/addoninstance.h>
+#include <fcitx/inputcontext.h>
 
 /// Trigger quickphrase, with following format:
 /// description_text prefix_text
 FCITX_ADDON_DECLARE_FUNCTION(LuaAddon, invokeLuaFunction,
-                             fcitx::RawConfig(const std::string &text,
+                             fcitx::RawConfig(fcitx::InputContext *ic,
+                                              const std::string &text,
                                               const fcitx::RawConfig &config));
 
 #endif // _FCITX5_LUA_ADDONLOADER_LUAADDON_PUBLIC_H_
