@@ -25,6 +25,8 @@
 #include <fcitx/instance.h>
 #include <lua.hpp>
 #include <quickphrase_public.h>
+///
+// @module fcitx
 
 namespace fcitx {
 
@@ -98,20 +100,81 @@ public:
 private:
     InputContext *currentInputContext() { return inputContext_.get(); }
 
+    /// Get the version of fcitx.
+    // @function version
+    // @treturn string The version of fcitx.
     DEFINE_LUA_FUNCTION(version);
+    /// Get the last committed string.
+    // @function lastCommit
+    // @treturn string The last commit string from fcitx.
     DEFINE_LUA_FUNCTION(lastCommit);
+    /// a helper function to split the string by delimiter.
+    // @function splitString
+    // @string str string to be split.
+    // @string delim string used as delimiter.
+    // @treturn table An array of string split by delimiter, empty string will
+    // be skipped.
     DEFINE_LUA_FUNCTION(splitString);
+    /// a helper function to send Debug level log to fcitx.
+    // @function log
+    // @string str log string.
     DEFINE_LUA_FUNCTION(log);
+    /// Watch for a event from fcitx.
+    // @function watchEvent
+    // @string event Event Type string.
+    // @string function the function name.
+    // @return A unique integer identifier.
     DEFINE_LUA_FUNCTION(watchEvent);
+    /// Unwatch a certain event.
+    // @function unwatchEvent
+    // @int id id of the watcher.
+    // @see watchEvent
     DEFINE_LUA_FUNCTION(unwatchEvent);
+    /// Return the current input method.
+    // @function currentInputMethod
+    // @treturn string the unique string of current input method.
     DEFINE_LUA_FUNCTION(currentInputMethod);
+    /// Add a string converter for commiting string.
+    // @function addConverter
+    // @string function the function name.
+    // @treturn int A unique integer identifier.
     DEFINE_LUA_FUNCTION(addConverter);
+    /// Remove a converter.
+    // @function removeConverter
+    // @int id id of this converter.
+    // @see addConverter
     DEFINE_LUA_FUNCTION(removeConverter);
+    /// Add a quick phrase handler.
+    // @function addQuickPhraseHandler
+    // @string function the function name.
+    // @treturn int A unique integer identifier.
     DEFINE_LUA_FUNCTION(addQuickPhraseHandler);
+    /// Remove a quickphrase handler.
+    // @function removeQuickPhraseHandler
+    // @int id id of this handler.
+    // @see addQuickPhraseHandler
     DEFINE_LUA_FUNCTION(removeQuickPhraseHandler);
+    /// Commit string to current input context.
+    // @function commitString
+    // @string str string to be commit to input context.
     DEFINE_LUA_FUNCTION(commitString);
+    /// Locate all files with given path and suffix.
+    // @function standardPathLocate
+    // @int type
+    // @string path
+    // @string suffix
+    // @treturn table A table of full file name.
+    // @see StandardPath
     DEFINE_LUA_FUNCTION(standardPathLocate);
+    /// Helper function to convert UTF16 string to UTF8.
+    // @function UTF16ToUTF8
+    // @string str UTF16 string.
+    // @treturn string UTF8 string or empty string if it fails.
     DEFINE_LUA_FUNCTION(UTF16ToUTF8)
+    /// Helper function to convert UTF8 string to UTF16.
+    // @function UTF8ToUTF16
+    // @string str UTF8 string.
+    // @treturn string UTF16 string or empty string if it fails.
     DEFINE_LUA_FUNCTION(UTF8ToUTF16)
 
     std::tuple<std::string> versionImpl() { return Instance::version(); }

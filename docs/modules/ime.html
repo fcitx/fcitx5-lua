@@ -1,0 +1,547 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>fcitx5-lua</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/fcitx.html">fcitx</a></li>
+  <li><strong>ime</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>ime</code></h1>
+<p>Google Pinyin-like api module.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#register_command">register_command (command_name, lua_function_name, description, leading, help)</a></td>
+	<td class="summary">Register a two character command to be used with fcitx Quickphrase.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#register_trigger">register_trigger (lua_function_name, description, input_trigger_strings, candidate_trigger_strings)</a></td>
+	<td class="summary">Register a trigger function, to be triggered by input or candidate.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#register_converter">register_converter (lua_function_name, description)</a></td>
+	<td class="summary">Register a converter</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_version">get_version ()</a></td>
+	<td class="summary">Return version of fcitx.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_last_commit">get_last_commit ()</a></td>
+	<td class="summary">Return the string last being committed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#int_to_hex_string">int_to_hex_string (value[, width=0])</a></td>
+	<td class="summary">Convert an integer to hex string.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#join_string">join_string (str_list, sep)</a></td>
+	<td class="summary">Join a string list with separtor.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#parse_mapping">parse_mapping (src_string, line_sep, key_value_sep, values_sep)</a></td>
+	<td class="summary">Parse a string that represents a key-to-multiple-value table.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#split_string">split_string (str, sep)</a></td>
+	<td class="summary">Split the string, empty string will be ignored.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#trim_string">trim_string (s)</a></td>
+	<td class="summary">Trim the white space.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#trim_string_left">trim_string_left (s)</a></td>
+	<td class="summary">Trim the white space on the left.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#trim_string_right">trim_string_right (s)</a></td>
+	<td class="summary">Trim the white space on the right.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#utf8_to_utf16">utf8_to_utf16 (str)</a></td>
+	<td class="summary">Helper function to convert UTF16 string to UTF8.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#utf16_to_utf8">utf16_to_utf8 (str)</a></td>
+	<td class="summary">Helper function to convert UTF8 string to UTF16.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "register_command"></a>
+    <strong>register_command (command_name, lua_function_name, description, leading, help)</strong>
+    </dt>
+    <dd>
+    Register a two character command to be used with fcitx Quickphrase.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">command_name</span>
+        Command string, can be only exactly two characters.
+        </li>
+        <li><span class="parameter">lua_function_name</span>
+        global function name.
+        </li>
+        <li><span class="parameter">description</span>
+        Description, not used in the implementation.
+        </li>
+        <li><span class="parameter">leading</span>
+        The candidate selection key, can be either, 'none', 'alpha', 'digit', or omit for digit.
+        </li>
+        <li><span class="parameter">help</span>
+        Long help information, not used by the implementation.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "register_trigger"></a>
+    <strong>register_trigger (lua_function_name, description, input_trigger_strings, candidate_trigger_strings)</strong>
+    </dt>
+    <dd>
+    Register a trigger function, to be triggered by input or candidate.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">lua_function_name</span>
+        global function name.
+        </li>
+        <li><span class="parameter">description</span>
+        description, not used by the implementation.
+        </li>
+        <li><span class="parameter">input_trigger_strings</span>
+        A table of string to match input trigger.
+        </li>
+        <li><span class="parameter">candidate_trigger_strings</span>
+        A table of string ot match candidate.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "register_converter"></a>
+    <strong>register_converter (lua_function_name, description)</strong>
+    </dt>
+    <dd>
+    Register a converter
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">lua_function_name</span>
+        global function name.
+        </li>
+        <li><span class="parameter">description</span>
+        description string, not used by the implementation.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "get_version"></a>
+    <strong>get_version ()</strong>
+    </dt>
+    <dd>
+    Return version of fcitx.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "get_last_commit"></a>
+    <strong>get_last_commit ()</strong>
+    </dt>
+    <dd>
+    Return the string last being committed.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "int_to_hex_string"></a>
+    <strong>int_to_hex_string (value[, width=0])</strong>
+    </dt>
+    <dd>
+    Convert an integer to hex string.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">width</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+         (<em>default</em> 0)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        Hex string.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "join_string"></a>
+    <strong>join_string (str_list, sep)</strong>
+    </dt>
+    <dd>
+    Join a string list with separtor.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str_list</span>
+            <span class="types"><span class="type">tab</span></span>
+         A list of string
+        </li>
+        <li><span class="parameter">sep</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         A string separtor.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        Joined string.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "parse_mapping"></a>
+    <strong>parse_mapping (src_string, line_sep, key_value_sep, values_sep)</strong>
+    </dt>
+    <dd>
+    Parse a string that represents a key-to-multiple-value table.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">src_string</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         input string.
+        </li>
+        <li><span class="parameter">line_sep</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         Line separator.
+        </li>
+        <li><span class="parameter">key_value_sep</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         Separator between key and values.
+        </li>
+        <li><span class="parameter">values_sep</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         Separator between different values.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.6">table</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "split_string"></a>
+    <strong>split_string (str, sep)</strong>
+    </dt>
+    <dd>
+    Split the string, empty string will be ignored. </p>
+
+<p>   ime.split_string('a,b,c', ',') == {'a', 'b', 'c'}</p>
+
+<p>   ime.split_string('a,b,,c', ',') == {'a', 'b', 'c'}</p>
+
+<p>   ime.split_string('', ',') == {}
+]]
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         input string.
+        </li>
+        <li><span class="parameter">sep</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         separtor string.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.6">table</a></span>
+        A list of split string.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "trim_string"></a>
+    <strong>trim_string (s)</strong>
+    </dt>
+    <dd>
+    Trim the white space.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">s</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "trim_string_left"></a>
+    <strong>trim_string_left (s)</strong>
+    </dt>
+    <dd>
+    Trim the white space on the left.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">s</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "trim_string_right"></a>
+    <strong>trim_string_right (s)</strong>
+    </dt>
+    <dd>
+    Trim the white space on the right.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">s</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "utf8_to_utf16"></a>
+    <strong>utf8_to_utf16 (str)</strong>
+    </dt>
+    <dd>
+    Helper function to convert UTF16 string to UTF8.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         UTF16 string.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        UTF8 string or empty string if it fails.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "utf16_to_utf8"></a>
+    <strong>utf16_to_utf8 (str)</strong>
+    </dt>
+    <dd>
+    Helper function to convert UTF8 string to UTF16.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         UTF8 string.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        UTF16 string or empty string if it fails.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2020-04-01 11:04:29 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

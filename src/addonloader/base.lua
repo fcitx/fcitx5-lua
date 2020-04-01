@@ -1,5 +1,11 @@
+--- Fcitx module
+-- @module fcitx
 local fcitx = require("fcitx.core")
 
+--- Call a global function by its name.
+-- @param function_name name of the function
+-- @param ... the arguments forwarded to the function.
+-- @return nil if function is not found, or the return value of the function.
 function fcitx.call_by_name(function_name, ...)
     if type(_G[function_name]) ~= 'function' then
         return nil
@@ -7,6 +13,8 @@ function fcitx.call_by_name(function_name, ...)
     return _G[function_name](...)
 end
 
+--- The lua version of fcitx::KeyState. It represent the value of modifier keys.
+-- @table KeyState
 local KeyState = {
     None = 0,
     Shift = 1 << 0,
@@ -37,6 +45,9 @@ KeyState.SimpleMask = KeyState.Ctrl_Alt_Shift | KeyState.Super | KeyState.Super2
 
 fcitx.KeyState = KeyState
 
+--- The lua version of fcitx::StandardPath::Type. It represent the value of different
+-- type of directory.
+-- @table StandardPath
 fcitx.StandardPath = {
     Config = 0,
     PkgConfig = 1,
@@ -47,6 +58,9 @@ fcitx.StandardPath = {
     PkgData = 6
 }
 
+--- The lua version of fcitx::QuickPhraseAction. It represent the different value
+-- that can be returned from quickphrase handler.
+-- @table QuickPhraseAction
 fcitx.QuickPhraseAction = {
     Break = -1,
 

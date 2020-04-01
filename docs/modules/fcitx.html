@@ -1,0 +1,780 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>fcitx5-lua</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>fcitx</strong></li>
+  <li><a href="../modules/ime.html">ime</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>fcitx</code></h1>
+<p>Fcitx module</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#call_by_name">call_by_name (function_name, ...)</a></td>
+	<td class="summary">Call a global function by its name.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#version">version ()</a></td>
+	<td class="summary">Get the version of fcitx.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#lastCommit">lastCommit ()</a></td>
+	<td class="summary">Get the last committed string.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#splitString">splitString (str, delim)</a></td>
+	<td class="summary">a helper function to split the string by delimiter.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#log">log (str)</a></td>
+	<td class="summary">a helper function to send Debug level log to fcitx.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#watchEvent">watchEvent (event, function)</a></td>
+	<td class="summary">Watch for a event from fcitx.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#unwatchEvent">unwatchEvent (id)</a></td>
+	<td class="summary">Unwatch a certain event.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#currentInputMethod">currentInputMethod ()</a></td>
+	<td class="summary">Return the current input method.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#addConverter">addConverter (function)</a></td>
+	<td class="summary">Add a string converter for commiting string.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#removeConverter">removeConverter (id)</a></td>
+	<td class="summary">Remove a converter.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#addQuickPhraseHandler">addQuickPhraseHandler (function)</a></td>
+	<td class="summary">Add a quick phrase handler.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#removeQuickPhraseHandler">removeQuickPhraseHandler (id)</a></td>
+	<td class="summary">Remove a quickphrase handler.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#commitString">commitString (str)</a></td>
+	<td class="summary">Commit string to current input context.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#standardPathLocate">standardPathLocate (type, path, suffix)</a></td>
+	<td class="summary">Locate all files with given path and suffix.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#UTF16ToUTF8">UTF16ToUTF8 (str)</a></td>
+	<td class="summary">Helper function to convert UTF16 string to UTF8.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#UTF8ToUTF16">UTF8ToUTF16 (str)</a></td>
+	<td class="summary">Helper function to convert UTF8 string to UTF16.</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#KeyState">KeyState</a></td>
+	<td class="summary">The lua version of fcitx::KeyState.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#StandardPath">StandardPath</a></td>
+	<td class="summary">The lua version of fcitx::StandardPath::Type.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#QuickPhraseAction">QuickPhraseAction</a></td>
+	<td class="summary">The lua version of fcitx::QuickPhraseAction.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "call_by_name"></a>
+    <strong>call_by_name (function_name, ...)</strong>
+    </dt>
+    <dd>
+    Call a global function by its name.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">function_name</span>
+         name of the function
+        </li>
+        <li><span class="parameter">...</span>
+         the arguments forwarded to the function.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        nil if function is not found, or the return value of the function.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "version"></a>
+    <strong>version ()</strong>
+    </dt>
+    <dd>
+    Get the version of fcitx.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        The version of fcitx.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "lastCommit"></a>
+    <strong>lastCommit ()</strong>
+    </dt>
+    <dd>
+    Get the last committed string.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        The last commit string from fcitx.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "splitString"></a>
+    <strong>splitString (str, delim)</strong>
+    </dt>
+    <dd>
+    a helper function to split the string by delimiter.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         string to be split.
+        </li>
+        <li><span class="parameter">delim</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         string used as delimiter.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.6">table</a></span>
+        An array of string split by delimiter, empty string will
+ be skipped.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "log"></a>
+    <strong>log (str)</strong>
+    </dt>
+    <dd>
+    a helper function to send Debug level log to fcitx.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         log string.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "watchEvent"></a>
+    <strong>watchEvent (event, function)</strong>
+    </dt>
+    <dd>
+    Watch for a event from fcitx.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">event</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         Event Type string.
+        </li>
+        <li><span class="parameter">function</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         the function name.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        A unique integer identifier.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "unwatchEvent"></a>
+    <strong>unwatchEvent (id)</strong>
+    </dt>
+    <dd>
+    Unwatch a certain event.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         id of the watcher.
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/fcitx.html#watchEvent">watchEvent</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "currentInputMethod"></a>
+    <strong>currentInputMethod ()</strong>
+    </dt>
+    <dd>
+    Return the current input method.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        the unique string of current input method.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "addConverter"></a>
+    <strong>addConverter (function)</strong>
+    </dt>
+    <dd>
+    Add a string converter for commiting string.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">function</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         the function name.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        A unique integer identifier.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "removeConverter"></a>
+    <strong>removeConverter (id)</strong>
+    </dt>
+    <dd>
+    Remove a converter.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         id of this converter.
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/fcitx.html#addConverter">addConverter</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "addQuickPhraseHandler"></a>
+    <strong>addQuickPhraseHandler (function)</strong>
+    </dt>
+    <dd>
+    Add a quick phrase handler.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">function</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         the function name.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        A unique integer identifier.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "removeQuickPhraseHandler"></a>
+    <strong>removeQuickPhraseHandler (id)</strong>
+    </dt>
+    <dd>
+    Remove a quickphrase handler.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         id of this handler.
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/fcitx.html#addQuickPhraseHandler">addQuickPhraseHandler</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "commitString"></a>
+    <strong>commitString (str)</strong>
+    </dt>
+    <dd>
+    Commit string to current input context.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         string to be commit to input context.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "standardPathLocate"></a>
+    <strong>standardPathLocate (type, path, suffix)</strong>
+    </dt>
+    <dd>
+    Locate all files with given path and suffix.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">suffix</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.6">table</a></span>
+        A table of full file name.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/fcitx.html#StandardPath">StandardPath</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "UTF16ToUTF8"></a>
+    <strong>UTF16ToUTF8 (str)</strong>
+    </dt>
+    <dd>
+    Helper function to convert UTF16 string to UTF8.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         UTF16 string.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        UTF8 string or empty string if it fails.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "UTF8ToUTF16"></a>
+    <strong>UTF8ToUTF16 (str)</strong>
+    </dt>
+    <dd>
+    Helper function to convert UTF8 string to UTF16.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         UTF8 string.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+        UTF16 string or empty string if it fails.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "KeyState"></a>
+    <strong>KeyState</strong>
+    </dt>
+    <dd>
+    The lua version of fcitx::KeyState.  It represent the value of modifier keys.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">None</span>
+
+
+
+        </li>
+        <li><span class="parameter">Shift</span>
+
+
+
+        </li>
+        <li><span class="parameter">CapsLock</span>
+
+
+
+        </li>
+        <li><span class="parameter">Ctrl</span>
+
+
+
+        </li>
+        <li><span class="parameter">Alt</span>
+
+
+
+        </li>
+        <li><span class="parameter">NumLock</span>
+
+
+
+        </li>
+        <li><span class="parameter">Mod3</span>
+
+
+
+        </li>
+        <li><span class="parameter">Super</span>
+
+
+
+        </li>
+        <li><span class="parameter">Mod5</span>
+
+
+
+        </li>
+        <li><span class="parameter">MousePressed</span>
+
+
+
+        </li>
+        <li><span class="parameter">HandledMask</span>
+
+
+
+        </li>
+        <li><span class="parameter">IgnoredMask</span>
+
+
+
+        </li>
+        <li><span class="parameter">Super2</span>
+
+
+
+        </li>
+        <li><span class="parameter">Hyper</span>
+
+
+
+        </li>
+        <li><span class="parameter">Meta</span>
+
+
+
+        </li>
+        <li><span class="parameter">UsedMask</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "StandardPath"></a>
+    <strong>StandardPath</strong>
+    </dt>
+    <dd>
+    The lua version of fcitx::StandardPath::Type.  It represent the value of different
+ type of directory.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">Config</span>
+
+
+
+        </li>
+        <li><span class="parameter">PkgConfig</span>
+
+
+
+        </li>
+        <li><span class="parameter">Data</span>
+
+
+
+        </li>
+        <li><span class="parameter">Cache</span>
+
+
+
+        </li>
+        <li><span class="parameter">Runtime</span>
+
+
+
+        </li>
+        <li><span class="parameter">Addon</span>
+
+
+
+        </li>
+        <li><span class="parameter">PkgData</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "QuickPhraseAction"></a>
+    <strong>QuickPhraseAction</strong>
+    </dt>
+    <dd>
+    The lua version of fcitx::QuickPhraseAction.  It represent the different value
+ that can be returned from quickphrase handler.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">Break</span>
+
+
+
+        </li>
+        <li><span class="parameter">Commit</span>
+
+
+
+        </li>
+        <li><span class="parameter">TypeToBuffer</span>
+
+
+
+        </li>
+        <li><span class="parameter">DigitSelection</span>
+
+
+
+        </li>
+        <li><span class="parameter">AlphaSelection</span>
+
+
+
+        </li>
+        <li><span class="parameter">NoneSelection</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2020-04-01 11:04:29 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
