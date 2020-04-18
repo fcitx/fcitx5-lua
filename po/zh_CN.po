@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-lua\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2020-04-02 00:02-0700\n"
+"POT-Creation-Date: 2020-04-18 00:02-0700\n"
 "PO-Revision-Date: 2020-04-01 16:17+0000\n"
 "Last-Translator: csslayer <wengxt@gmail.com>, 2020\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/fcitx/teams/12005/"
@@ -30,8 +30,8 @@ msgstr "Lua 附加组件支持"
 
 #: src/imeapi/imeapi.conf.in:3
 msgid "Lua IME API"
-msgstr ""
+msgstr "Lua IME API"
 
 #: src/imeapi/imeapi.conf.in:4
 msgid "Lua IME API support"
-msgstr ""
+msgstr "Lua IME API 支持"
