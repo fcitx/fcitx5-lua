@@ -36,8 +36,13 @@ AddonInstance *LuaAddonLoader::load(const AddonInfo &info,
     return nullptr;
 }
 
-LuaAddonLoaderAddon::LuaAddonLoaderAddon(AddonManager *manager) {
+LuaAddonLoaderAddon::LuaAddonLoaderAddon(AddonManager *manager)
+    : manager_(manager) {
     manager->registerLoader(std::make_unique<LuaAddonLoader>());
+}
+
+LuaAddonLoaderAddon::~LuaAddonLoaderAddon() {
+    manager_->unregisterLoader("Lua");
 }
 
 AddonInstance *LuaAddonLoaderFactory::create(AddonManager *manager) {

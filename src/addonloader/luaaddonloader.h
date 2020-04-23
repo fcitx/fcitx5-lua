@@ -34,6 +34,10 @@ public:
 class LuaAddonLoaderAddon : public AddonInstance {
 public:
     LuaAddonLoaderAddon(AddonManager *manager);
+    ~LuaAddonLoaderAddon();
+
+private:
+    AddonManager *manager_;
 };
 
 class LuaAddonLoaderFactory : public AddonFactory {
