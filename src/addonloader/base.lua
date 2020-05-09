@@ -1,3 +1,9 @@
+--
+-- SPDX-FileCopyrightText: 2010 Peng Wu <alexepico@gmail.com>
+-- SPDX-FileCopyrightText: 2020 Weng Xuetian <wengxt@gmail.com>
+--
+-- SPDX-License-Identifier: GPL-2.0-or-later
+--
 --- Fcitx module
 -- @module fcitx
 local fcitx = require("fcitx.core")
