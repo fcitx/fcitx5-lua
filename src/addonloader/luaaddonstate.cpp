@@ -297,7 +297,7 @@ bool LuaAddonState::handleQuickPhrase(
 std::tuple<int> LuaAddonState::addQuickPhraseHandlerImpl(const char *function) {
     int newId = ++currentId_;
     quickphraseHandler_.emplace(newId, function);
-    if (!quickphraseCallback_) {
+    if (!quickphraseCallback_ && quickphrase()) {
         quickphraseCallback_ = quickphrase()->call<IQuickPhrase::addProvider>(
             [this](InputContext *ic, const std::string &input,
                    QuickPhraseAddCandidateCallback callback) {
