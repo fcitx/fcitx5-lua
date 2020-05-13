@@ -34,7 +34,7 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         auto testim = instance->addonManager().addon("testim");
         testim->call<ITestIM::setHandler>(
             [](const InputMethodEntry &, KeyEvent &keyEvent) {
-                if (keyEvent.key().states() != KeyState::None ||
+                if (keyEvent.key().states() != KeyState::NoState ||
                     keyEvent.isRelease()) {
                     return;
                 }
