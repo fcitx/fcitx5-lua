@@ -7,10 +7,10 @@
 #ifndef _FCITX5_LUA_ADDONLOADER_LUAHELPER_H_
 #define _FCITX5_LUA_ADDONLOADER_LUAHELPER_H_
 
+#include "luastate.h"
 #include <cstdint>
 #include <fcitx-utils/log.h>
 #include <fcitx-utils/macros.h>
-#include <lua.hpp>
 #include <tuple>
 #include <utility>
 
@@ -23,47 +23,47 @@ struct LuaArgTypeTraits;
 
 template <>
 struct LuaArgTypeTraits<int> {
-    static int check(lua_State *lua, int arg) {
-        return luaL_checkinteger(lua, arg);
+    static int check(LuaState *lua, int arg) {
+        return lua->luaL_checkinteger(arg);
     }
-    static void ret(lua_State *lua, int v) { lua_pushinteger(lua, v); }
+    static void ret(LuaState *lua, int v) { lua->lua_pushinteger(v); }
 };
 template <>
 struct LuaArgTypeTraits<const char *> {
-    static const char *check(lua_State *lua, int arg) {
-        return luaL_checkstring(lua, arg);
+    static const char *check(LuaState *lua, int arg) {
+        return lua->luaL_checklstring(arg, nullptr);
     }
-    static void ret(lua_State *lua, const char *s) { lua_pushstring(lua, s); }
+    static void ret(LuaState *lua, const char *s) { lua->lua_pushstring(s); }
 };
 template <>
 struct LuaArgTypeTraits<std::string> {
-    static void ret(lua_State *lua, const std::string &s) {
-        lua_pushstring(lua, s.data());
+    static void ret(LuaState *lua, const std::string &s) {
+        lua->lua_pushstring(s.data());
     }
 };
 template <>
 struct LuaArgTypeTraits<std::vector<std::string>> {
-    static void ret(lua_State *lua, const std::vector<std::string> &s) {
-        lua_createtable(lua, s.size(), 0);
+    static void ret(LuaState *lua, const std::vector<std::string> &s) {
+        lua->lua_createtable(s.size(), 0);
         for (size_t i = 0; i < s.size(); i++) {
-            lua_pushstring(lua, s[i].data());
-            lua_rawseti(lua, -2, i + 1); /* In lua indices start at 1 */
+            lua->lua_pushstring(s[i].data());
+            lua->lua_rawseti(-2, i + 1); /* In lua indices start at 1 */
         }
     }
 };
 
 template <typename TraitsTuple, std::size_t... I>
-auto LuaCheckArgumentImpl(lua_State *lua, std::index_sequence<I...>) {
+auto LuaCheckArgumentImpl(LuaState *lua, std::index_sequence<I...>) {
     FCITX_UNUSED(lua);
     return std::make_tuple(
         std::tuple_element_t<I, TraitsTuple>::check(lua, I + 1)...);
 }
 
 template <typename Ret, typename... Args, typename T>
-std::tuple<Args...> LuaCheckArgument(lua_State *lua, Ret (T::*)(Args...)) {
-    if (auto argnum = lua_gettop(lua); argnum != sizeof...(Args)) {
-        luaL_error(lua, "Wrong argument number %d, expecting %d", argnum,
-                   sizeof...(Args));
+std::tuple<Args...> LuaCheckArgument(LuaState *lua, Ret (T::*)(Args...)) {
+    if (auto argnum = lua->lua_gettop(); argnum != sizeof...(Args)) {
+        lua->luaL_error("Wrong argument number %d, expecting %d", argnum,
+                        sizeof...(Args));
     }
 
     using tupleType = std::tuple<LuaArgTypeTraits<Args>...>;
@@ -73,7 +73,7 @@ std::tuple<Args...> LuaCheckArgument(lua_State *lua, Ret (T::*)(Args...)) {
 }
 
 template <typename Tuple, std::size_t... I>
-void LuaReturnImpl(lua_State *lua, const Tuple &tuple,
+void LuaReturnImpl(LuaState *lua, const Tuple &tuple,
                    std::index_sequence<I...>) {
     FCITX_UNUSED(lua);
     (LuaArgTypeTraits<std::tuple_element_t<I, Tuple>>::ret(lua,
@@ -82,7 +82,7 @@ void LuaReturnImpl(lua_State *lua, const Tuple &tuple,
 }
 
 template <typename... Args>
-int LuaReturn(lua_State *s, const std::tuple<Args...> &args) {
+int LuaReturn(LuaState *s, const std::tuple<Args...> &args) {
     LuaReturnImpl(s, args, std::index_sequence_for<Args...>{});
     return sizeof...(Args);
 }
@@ -90,6 +90,13 @@ int LuaReturn(lua_State *s, const std::tuple<Args...> &args) {
 constexpr char kLuaModuleName[] = "__fcitx_luaaddon";
 
 LuaAddonState *GetLuaAddonState(lua_State *lua);
+
+// These functions are required for GetLuaAddonState.
+extern decltype(&lua_getglobal) _fcitx_lua_getglobal;
+extern decltype(&lua_touserdata) _fcitx_lua_touserdata;
+extern decltype(&lua_settop) _fcitx_lua_settop;
+extern decltype(&lua_close) _fcitx_lua_close;
+extern decltype(&luaL_newstate) _fcitx_luaL_newstate;
 
 FCITX_DECLARE_LOG_CATEGORY(lua_log);
 #define FCITX_LUA_INFO() FCITX_LOGC(::fcitx::lua_log, Info)

@@ -8,10 +8,10 @@
 #define _FCITX5_LUA_ADDONLOADER_LUAADDONSTATE_H_
 
 #include "luahelper.h"
+#include "luastate.h"
 #include <fcitx/addoninfo.h>
 #include <fcitx/addonmanager.h>
 #include <fcitx/instance.h>
-#include <lua.hpp>
 #include <quickphrase_public.h>
 ///
 // @module fcitx
@@ -20,15 +20,16 @@ namespace fcitx {
 
 #define DEFINE_LUA_FUNCTION(FUNCTION_NAME)                                     \
     static int FUNCTION_NAME(lua_State *lua) {                                 \
-        auto args =                                                            \
-            LuaCheckArgument(lua, &LuaAddonState::FUNCTION_NAME##Impl);        \
+        auto state = GetLuaAddonState(lua);                                    \
+        auto args = LuaCheckArgument(state->state_.get(),                      \
+                                     &LuaAddonState::FUNCTION_NAME##Impl);     \
         try {                                                                  \
             auto fn = std::mem_fn(&LuaAddonState::FUNCTION_NAME##Impl);        \
-            auto combined_args =                                               \
-                std::tuple_cat(std::make_tuple(GetLuaAddonState(lua)), args);  \
-            return LuaReturn(lua, fcitx::callWithTuple(fn, combined_args));    \
+            auto combined_args = std::tuple_cat(std::make_tuple(state), args); \
+            return LuaReturn(state->state_.get(),                              \
+                             fcitx::callWithTuple(fn, combined_args));         \
         } catch (const std::exception &e) {                                    \
-            return luaL_error(lua, e.what());                                  \
+            return state->state_.get()->luaL_error(e.what());                  \
         }                                                                      \
     }
 
@@ -77,10 +78,10 @@ private:
 
 class LuaAddonState {
 public:
-    LuaAddonState(const std::string &name, const std::string &library,
-                  AddonManager *manager);
+    LuaAddonState(Library &luaLibrary, const std::string &name,
+                  const std::string &library, AddonManager *manager);
 
-    operator lua_State *() { return state_.get(); }
+    operator LuaState *() { return state_.get(); }
 
     RawConfig invokeLuaFunction(InputContext *ic, const std::string &name,
                                 const RawConfig &config);
@@ -196,7 +197,7 @@ private:
     bool handleQuickPhrase(InputContext *ic, const std::string &input,
                            const QuickPhraseAddCandidateCallback &callback);
     Instance *instance_;
-    std::unique_ptr<lua_State, decltype(&lua_close)> state_;
+    std::unique_ptr<LuaState> state_;
     TrackableObjectReference<InputContext> inputContext_;
 
     std::unordered_map<int, EventWatcher> eventHandler_;

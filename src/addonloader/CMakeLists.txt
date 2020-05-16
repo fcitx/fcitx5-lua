@@ -1,4 +1,4 @@
-add_library(luaaddonloader MODULE luaaddonstate.cpp luaaddonloader.cpp luaaddon.cpp luahelper.cpp ${CMAKE_CURRENT_BINARY_DIR}/baselua.h)
+add_library(luaaddonloader MODULE luastate.cpp luaaddonstate.cpp luaaddonloader.cpp luaaddon.cpp luahelper.cpp ${CMAKE_CURRENT_BINARY_DIR}/baselua.h)
 target_link_libraries(luaaddonloader Lua::_LuaLibrary Fcitx5::Core Fcitx5::Module::QuickPhrase)
 target_include_directories(luaaddonloader PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 set_target_properties(luaaddonloader PROPERTIES PREFIX "")

@@ -19,12 +19,14 @@ include("${FCITX_INSTALL_CMAKECONFIG_DIR}/Fcitx5Utils/Fcitx5CompilerSettings.cma
 include(Helper)
 
 if (NOT TARGET Lua::_LuaLibrary)
-add_library(Lua::_LuaLibrary UNKNOWN IMPORTED ${LUA_LIBRARIES})
+add_library(Lua::_LuaLibrary IMPORTED INTERFACE)
 set_target_properties(Lua::_LuaLibrary PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES ${LUA_INCLUDE_DIR}
-    IMPORTED_LOCATION ${LUA_LIBRARY})
+    INTERFACE_INCLUDE_DIRECTORIES ${LUA_INCLUDE_DIR})
 
 endif()
+
+configure_file(config.h.in config.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src)
 add_subdirectory(test)

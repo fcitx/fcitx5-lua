@@ -5,28 +5,28 @@
  *
  */
 #include "luaaddon.h"
-#include <lua.hpp>
 
 namespace fcitx {
 
-LuaAddon::LuaAddon(const AddonInfo &info, AddonManager *manager)
+LuaAddon::LuaAddon(Library &luaLibrary, const AddonInfo &info,
+                   AddonManager *manager)
     : instance_(manager->instance()), name_(info.uniqueName()),
-      library_(info.library()),
-      state_(std::make_unique<LuaAddonState>(name_, library_, manager)) {}
+      library_(info.library()), state_(std::make_unique<LuaAddonState>(
+                                    luaLibrary, name_, library_, manager)),
+      luaLibrary_(&luaLibrary) {}
 
-void fcitx::LuaAddon::reloadConfig() {
+void LuaAddon::reloadConfig() {
     try {
         auto newState = std::make_unique<LuaAddonState>(
-            name_, library_, &instance_->addonManager());
+            *luaLibrary_, name_, library_, &instance_->addonManager());
         state_ = std::move(newState);
     } catch (const std::exception &e) {
         FCITX_LUA_ERROR() << e.what();
     }
 }
 
-fcitx::RawConfig
-fcitx::LuaAddon::invokeLuaFunction(InputContext *ic, const std::string &name,
-                                   const fcitx::RawConfig &config) {
+RawConfig LuaAddon::invokeLuaFunction(InputContext *ic, const std::string &name,
+                                      const RawConfig &config) {
     return state_->invokeLuaFunction(ic, name, config);
 }
 

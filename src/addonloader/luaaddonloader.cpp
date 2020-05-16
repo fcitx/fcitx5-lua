@@ -5,16 +5,47 @@
  *
  */
 #include "luaaddonloader.h"
+#include "config.h"
 #include "luaaddon.h"
 #include <fcitx/addonmanager.h>
+#include <stdexcept>
 
 namespace fcitx {
 
+LuaAddonLoader::LuaAddonLoader() {
+    luaLibrary_.load();
+    if (!luaLibrary_.loaded()) {
+        FCITX_LUA_ERROR() << "Failed to load lua library: "
+                          << luaLibrary_.error();
+    }
+    _fcitx_lua_getglobal = reinterpret_cast<decltype(_fcitx_lua_getglobal)>(
+        luaLibrary_.resolve("lua_getglobal"));
+    _fcitx_lua_touserdata = reinterpret_cast<decltype(_fcitx_lua_touserdata)>(
+        luaLibrary_.resolve("lua_touserdata"));
+    _fcitx_lua_settop = reinterpret_cast<decltype(_fcitx_lua_settop)>(
+        luaLibrary_.resolve("lua_settop"));
+    _fcitx_lua_close = reinterpret_cast<decltype(_fcitx_lua_close)>(
+        luaLibrary_.resolve("lua_close"));
+    _fcitx_luaL_newstate = reinterpret_cast<decltype(_fcitx_luaL_newstate)>(
+        luaLibrary_.resolve("luaL_newstate"));
+
+    if (!_fcitx_lua_getglobal || !_fcitx_lua_touserdata || !_fcitx_lua_settop ||
+        !_fcitx_lua_close || !_fcitx_luaL_newstate) {
+        throw std::runtime_error("Failed to resolve lua functions.");
+    }
+
+    // Create test state to ensure the function can be resolved.
+    LuaState testState(luaLibrary_);
+}
+
 AddonInstance *LuaAddonLoader::load(const AddonInfo &info,
                                     AddonManager *manager) {
+    if (!luaLibrary_.loaded()) {
+        return nullptr;
+    }
     if (info.category() == AddonCategory::Module) {
         try {
-            auto addon = std::make_unique<LuaAddon>(info, manager);
+            auto addon = std::make_unique<LuaAddon>(luaLibrary_, info, manager);
             return addon.release();
         } catch (const std::exception &e) {
             FCITX_LUA_ERROR() << "Loading lua addon " << info.uniqueName()

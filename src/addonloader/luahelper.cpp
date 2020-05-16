@@ -5,16 +5,23 @@
  *
  */
 #include "luahelper.h"
+#include "luaaddonstate.h"
 
 namespace fcitx {
 
 FCITX_DEFINE_LOG_CATEGORY(lua_log, "lua");
 
+decltype(&lua_getglobal) _fcitx_lua_getglobal;
+decltype(&lua_touserdata) _fcitx_lua_touserdata;
+decltype(&lua_settop) _fcitx_lua_settop;
+decltype(&lua_close) _fcitx_lua_close;
+decltype(&luaL_newstate) _fcitx_luaL_newstate;
+
 LuaAddonState *GetLuaAddonState(lua_State *lua) {
-    lua_getglobal(lua, kLuaModuleName);
+    _fcitx_lua_getglobal(lua, kLuaModuleName);
     LuaAddonState **module =
-        reinterpret_cast<LuaAddonState **>(lua_touserdata(lua, -1));
-    lua_pop(lua, 1);
+        reinterpret_cast<LuaAddonState **>(_fcitx_lua_touserdata(lua, -1));
+    _fcitx_lua_settop(lua, -2);
     return *module;
 }
 

@@ -1,0 +1,12 @@
+/*
+ * SPDX-FileCopyrightText: 2020~2020 CSSlayer <wengxt@gmail.com>
+ *
+ * SPDX-License-Identifier: LGPL-2.1-or-later
+ *
+ */
+#ifndef _FCITX5_LUA_CONFIG_H_
+#define _FCITX5_LUA_CONFIG_H_
+
+#cmakedefine LUA_LIBRARY "@LUA_LIBRARY@"
+
+#endif // _FCITX5_LUA_CONFIG_H_
