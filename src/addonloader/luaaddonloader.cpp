@@ -48,9 +48,11 @@ LuaAddonLoader::LuaAddonLoader() {
 
 AddonInstance *LuaAddonLoader::load(const AddonInfo &info,
                                     AddonManager *manager) {
+#ifdef USE_DLOPEN
     if (!luaLibrary_.loaded()) {
         return nullptr;
     }
+#endif
     if (info.category() == AddonCategory::Module) {
         try {
             auto addon = std::make_unique<LuaAddon>(luaLibrary_, info, manager);
