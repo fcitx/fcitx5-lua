@@ -8,5 +8,6 @@
 #define _FCITX5_LUA_CONFIG_H_
 
 #cmakedefine LUA_LIBRARY "@LUA_LIBRARY@"
+#cmakedefine USE_DLOPEN
 
 #endif // _FCITX5_LUA_CONFIG_H_

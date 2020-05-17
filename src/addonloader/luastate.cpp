@@ -5,11 +5,16 @@
  *
  */
 #include "luastate.h"
+#include "config.h"
 #include "luahelper.h"
 #include <stdexcept>
 
+#ifdef USE_DLOPEN
 #define GET_LUA_API(FUNCTION)                                                  \
     (reinterpret_cast<decltype(&::FUNCTION)>(luaLibrary_->resolve(#FUNCTION)))
+#else
+#define GET_LUA_API(FUNCTION) (&::FUNCTION)
+#endif
 #define FILL_LUA_API(FUNCTION) FUNCTION##_ = GET_LUA_API(FUNCTION)
 
 namespace fcitx {

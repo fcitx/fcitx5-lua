@@ -13,6 +13,7 @@
 namespace fcitx {
 
 LuaAddonLoader::LuaAddonLoader() {
+#ifdef USE_DLOPEN
     luaLibrary_.load();
     if (!luaLibrary_.loaded()) {
         FCITX_LUA_ERROR() << "Failed to load lua library: "
@@ -28,6 +29,13 @@ LuaAddonLoader::LuaAddonLoader() {
         luaLibrary_.resolve("lua_close"));
     _fcitx_luaL_newstate = reinterpret_cast<decltype(_fcitx_luaL_newstate)>(
         luaLibrary_.resolve("luaL_newstate"));
+#else
+    _fcitx_lua_getglobal = lua_getglobal;
+    _fcitx_lua_touserdata = lua_touserdata;
+    _fcitx_lua_settop = lua_settop;
+    _fcitx_lua_close = lua_close;
+    _fcitx_luaL_newstate = luaL_newstate;
+#endif
 
     if (!_fcitx_lua_getglobal || !_fcitx_lua_touserdata || !_fcitx_lua_settop ||
         !_fcitx_lua_close || !_fcitx_luaL_newstate) {

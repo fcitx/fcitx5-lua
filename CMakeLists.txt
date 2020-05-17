@@ -15,14 +15,22 @@ find_package(Gettext REQUIRED)
 find_package(Pthread REQUIRED)
 find_package(Fcitx5Module REQUIRED COMPONENTS TestFrontend TestIM QuickPhrase)
 
+option(USE_DLOPEN "Use dlopen to load lua library." On)
+
 include("${FCITX_INSTALL_CMAKECONFIG_DIR}/Fcitx5Utils/Fcitx5CompilerSettings.cmake")
 include(Helper)
 
 if (NOT TARGET Lua::_LuaLibrary)
-add_library(Lua::_LuaLibrary IMPORTED INTERFACE)
-set_target_properties(Lua::_LuaLibrary PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES ${LUA_INCLUDE_DIR})
-
+    if (USE_DLOPEN)
+        add_library(Lua::_LuaLibrary IMPORTED INTERFACE)
+        set_target_properties(Lua::_LuaLibrary PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES ${LUA_INCLUDE_DIR})
+    else()
+        add_library(Lua::_LuaLibrary UNKNOWN IMPORTED ${LUA_LIBRARY})
+        set_target_properties(Lua::_LuaLibrary PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES ${LUA_INCLUDE_DIR}
+            IMPORTED_LOCATION ${LUA_LIBRARY})
+    endif()
 endif()
 
 configure_file(config.h.in config.h)
