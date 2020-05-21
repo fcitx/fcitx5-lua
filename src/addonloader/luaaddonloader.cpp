@@ -14,7 +14,8 @@ namespace fcitx {
 
 LuaAddonLoader::LuaAddonLoader() {
 #ifdef USE_DLOPEN
-    luaLibrary_.load();
+    luaLibrary_.load(
+        {LibraryLoadHint::NewNameSpace, LibraryLoadHint::DefaultHint});
     if (!luaLibrary_.loaded()) {
         FCITX_LUA_ERROR() << "Failed to load lua library: "
                           << luaLibrary_.error();
