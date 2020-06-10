@@ -7,7 +7,7 @@ local fcitx = require("fcitx")
 
 fcitx.log("ABCD");
 
-fcitx.watchEvent("KeyEvent", "key_logger")
+fcitx.watchEvent(fcitx.EventType.KeyEvent, "key_logger")
 fcitx.addConverter("convert")
 
 function key_logger(sym, state, release)

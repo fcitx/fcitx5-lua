@@ -91,4 +91,24 @@ end
 
 fcitx.dump = dump
 
+--- The lua version of fcitx::EventType. It represent the value of different
+-- type of events.
+-- @table EventType
+local EventType = {
+    ContextCreated = 0x0001000 | 0x1,
+    ContextDestroyed = 0x0001000 | 0x2,
+    FocusOut = 0x0001000 | 0x3,
+    FocusIn = 0x0001000 | 0x4,
+    KeyEvent = 0x0001000 | 0x5,
+    SurroundingTextUpdated = 0x0001000 | 0x7,
+    CursorRectChanged = 0x0001000 | 0x9,
+    InputMethodActivated = 0x0001000 | 0xA,
+    InputMethodDeactivated = 0x0001000 | 0xB,
+
+    CommitString = 0x0002000 | 0x2,
+    UpdatePreedit = 0x0002000 | 0x4,
+}
+
+fcitx.EventType = EventType
+
 return fcitx

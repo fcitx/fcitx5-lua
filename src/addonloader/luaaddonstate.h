@@ -110,7 +110,7 @@ private:
     DEFINE_LUA_FUNCTION(log);
     /// Watch for a event from fcitx.
     // @function watchEvent
-    // @string event Event Type string.
+    // @fcitx.EventType event Event Type.
     // @string function the function name.
     // @return A unique integer identifier.
     DEFINE_LUA_FUNCTION(watchEvent);
@@ -166,11 +166,19 @@ private:
     // @treturn string UTF16 string or empty string if it fails.
     DEFINE_LUA_FUNCTION(UTF8ToUTF16)
 
+    template <typename T>
+    std::unique_ptr<HandlerTableEntry<EventHandler>> watchEvent(
+        EventType type, int id,
+        std::function<int(std::unique_ptr<LuaState> &, T &)> pushArguments =
+            nullptr,
+        std::function<void(std::unique_ptr<LuaState> &, T &)>
+            handleReturnValue = nullptr);
+
     std::tuple<std::string> versionImpl() { return Instance::version(); }
 
     std::tuple<std::string> lastCommitImpl() { return lastCommit_; }
     std::tuple<> logImpl(const char *msg);
-    std::tuple<int> watchEventImpl(const char *event, const char *function);
+    std::tuple<int> watchEventImpl(int eventType, const char *function);
     std::tuple<> unwatchEventImpl(int id);
     std::tuple<std::string> currentInputMethodImpl();
 
