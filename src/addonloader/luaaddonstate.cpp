@@ -128,46 +128,93 @@ std::tuple<> LuaAddonState::logImpl(const char *msg) {
     return {};
 }
 
-std::tuple<int> LuaAddonState::watchEventImpl(const char *event,
-                                              const char *function) {
-    std::string_view eventView(event);
-    bool validEvent = true;
-    EventType type;
-    if (eventView == "KeyEvent") {
-        type = EventType::InputContextKeyEvent;
-    } else {
-        validEvent = false;
-    }
-    if (!validEvent) {
-        throw std::runtime_error("Invalid eventype");
-    }
-    int newId = ++currentId_;
-    std::unique_ptr<HandlerTableEntry<EventHandler>> handler;
-    handler = instance_->watchEvent(
-        type, EventWatcherPhase::PreInputMethod, [this, newId](Event &event) {
-            auto iter = eventHandler_.find(newId);
+template <typename T>
+std::unique_ptr<HandlerTableEntry<EventHandler>> LuaAddonState::watchEvent(
+    EventType type, int id,
+    std::function<int(std::unique_ptr<LuaState> &, T &)> pushArguments,
+    std::function<void(std::unique_ptr<LuaState> &, T &)> handleReturnValue) {
+    return instance_->watchEvent(
+        type, EventWatcherPhase::PreInputMethod,
+        [this, id, pushArguments, handleReturnValue](Event &event_) {
+            auto iter = eventHandler_.find(id);
+            int argc = 0;
             if (iter == eventHandler_.end()) {
                 return;
             }
-            auto &keyEvent = static_cast<KeyEvent &>(event);
-            ScopedICSetter setter(inputContext_,
-                                  keyEvent.inputContext()->watch());
+            auto &event = static_cast<T &>(event_);
+            ScopedICSetter setter(inputContext_, event.inputContext()->watch());
             state_->lua_getglobal(iter->second.function().data());
-            state_->lua_pushinteger(keyEvent.key().sym());
-            state_->lua_pushinteger(keyEvent.key().states());
-            state_->lua_pushboolean(keyEvent.isRelease());
-            int rv = state_->lua_pcallk(3, 1, 0, 0, nullptr);
+            if (pushArguments) {
+                argc = pushArguments(state_, event);
+            }
+            int rv = state_->lua_pcallk(argc, 1, 0, 0, nullptr);
             if (rv != 0) {
                 LuaPError(rv, "lua_pcall() failed");
                 LuaPrintError(*this);
             } else if (state_->lua_gettop() >= 1) {
-                auto b = state_->lua_toboolean(-1);
-                if (b) {
-                    keyEvent.filterAndAccept();
+                if (handleReturnValue) {
+                    handleReturnValue(state_, event);
                 }
             }
             state_->pop(state_->lua_gettop());
         });
+}
+
+std::tuple<int> LuaAddonState::watchEventImpl(int eventType,
+                                              const char *function) {
+    int newId = currentId_ + 1;
+    std::unique_ptr<HandlerTableEntry<EventHandler>> handler = nullptr;
+
+    switch (static_cast<EventType>(eventType)) {
+    case EventType::InputContextCreated:
+    case EventType::InputContextDestroyed:
+    case EventType::InputContextFocusIn:
+    case EventType::InputContextFocusOut:
+    case EventType::InputContextSurroundingTextUpdated:
+    case EventType::InputContextCursorRectChanged:
+    case EventType::InputContextUpdatePreedit:
+        handler = watchEvent<InputContextEvent>(
+            static_cast<EventType>(eventType), newId);
+        break;
+    case EventType::InputContextKeyEvent:
+        handler = watchEvent<KeyEvent>(
+            EventType::InputContextKeyEvent, newId,
+            [](std::unique_ptr<LuaState> &state, KeyEvent &event_) -> int {
+                state->lua_pushinteger(event_.key().sym());
+                state->lua_pushinteger(event_.key().states());
+                state->lua_pushboolean(event_.isRelease());
+                return 3;
+            },
+            [](std::unique_ptr<LuaState> &state, KeyEvent &event_) {
+                auto b = state->lua_toboolean(-1);
+                if (b) {
+                    event_.filterAndAccept();
+                }
+            });
+        break;
+    case EventType::InputContextCommitString:
+        handler = watchEvent<CommitStringEvent>(
+            EventType::InputContextCommitString, newId,
+            [](std::unique_ptr<LuaState> &state,
+               CommitStringEvent &event_) -> int {
+                state->lua_pushstring(event_.text().c_str());
+                return 1;
+            });
+        break;
+    case EventType::InputContextInputMethodActivated:
+    case EventType::InputContextInputMethodDeactivated:
+        handler = watchEvent<InputMethodNotificationEvent>(
+            static_cast<EventType>(eventType), newId,
+            [](std::unique_ptr<LuaState> &state,
+               InputMethodNotificationEvent &event_) -> int {
+                state->lua_pushstring(event_.name().c_str());
+                return 1;
+            });
+        break;
+    default:
+        throw std::runtime_error("Invalid eventype");
+    }
+    currentId_++;
     eventHandler_.emplace(std::piecewise_construct,
                           std::forward_as_tuple(newId),
                           std::forward_as_tuple(function, std::move(handler)));
