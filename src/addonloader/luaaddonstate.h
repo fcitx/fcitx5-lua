@@ -29,7 +29,7 @@ namespace fcitx {
             return LuaReturn(state->state_.get(),                              \
                              fcitx::callWithTuple(fn, combined_args));         \
         } catch (const std::exception &e) {                                    \
-            return state->state_.get()->luaL_error(e.what());                  \
+            return luaL_error(state->state_, e.what());                        \
         }                                                                      \
     }
 

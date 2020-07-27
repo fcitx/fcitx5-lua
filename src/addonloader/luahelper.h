@@ -24,30 +24,30 @@ struct LuaArgTypeTraits;
 template <>
 struct LuaArgTypeTraits<int> {
     static int check(LuaState *lua, int arg) {
-        return lua->luaL_checkinteger(arg);
+        return luaL_checkinteger(lua, arg);
     }
-    static void ret(LuaState *lua, int v) { lua->lua_pushinteger(v); }
+    static void ret(LuaState *lua, int v) { lua_pushinteger(lua, v); }
 };
 template <>
 struct LuaArgTypeTraits<const char *> {
     static const char *check(LuaState *lua, int arg) {
-        return lua->luaL_checklstring(arg, nullptr);
+        return luaL_checkstring(lua, arg);
     }
-    static void ret(LuaState *lua, const char *s) { lua->lua_pushstring(s); }
+    static void ret(LuaState *lua, const char *s) { lua_pushstring(lua, s); }
 };
 template <>
 struct LuaArgTypeTraits<std::string> {
     static void ret(LuaState *lua, const std::string &s) {
-        lua->lua_pushstring(s.data());
+        lua_pushstring(lua, s.data());
     }
 };
 template <>
 struct LuaArgTypeTraits<std::vector<std::string>> {
     static void ret(LuaState *lua, const std::vector<std::string> &s) {
-        lua->lua_createtable(s.size(), 0);
+        lua_createtable(lua, s.size(), 0);
         for (size_t i = 0; i < s.size(); i++) {
-            lua->lua_pushstring(s[i].data());
-            lua->lua_rawseti(-2, i + 1); /* In lua indices start at 1 */
+            lua_pushstring(lua, s[i].data());
+            lua_rawseti(lua, -2, i + 1); /* In lua indices start at 1 */
         }
     }
 };
@@ -61,9 +61,9 @@ auto LuaCheckArgumentImpl(LuaState *lua, std::index_sequence<I...>) {
 
 template <typename Ret, typename... Args, typename T>
 std::tuple<Args...> LuaCheckArgument(LuaState *lua, Ret (T::*)(Args...)) {
-    if (auto argnum = lua->lua_gettop(); argnum != sizeof...(Args)) {
-        lua->luaL_error("Wrong argument number %d, expecting %d", argnum,
-                        sizeof...(Args));
+    if (auto argnum = lua_gettop(lua); argnum != sizeof...(Args)) {
+        luaL_error(lua, "Wrong argument number %d, expecting %d", argnum,
+                   sizeof...(Args));
     }
 
     using tupleType = std::tuple<LuaArgTypeTraits<Args>...>;
@@ -92,11 +92,11 @@ constexpr char kLuaModuleName[] = "__fcitx_luaaddon";
 LuaAddonState *GetLuaAddonState(lua_State *lua);
 
 // These functions are required for GetLuaAddonState.
-extern decltype(&lua_getglobal) _fcitx_lua_getglobal;
-extern decltype(&lua_touserdata) _fcitx_lua_touserdata;
-extern decltype(&lua_settop) _fcitx_lua_settop;
-extern decltype(&lua_close) _fcitx_lua_close;
-extern decltype(&luaL_newstate) _fcitx_luaL_newstate;
+extern decltype(&::lua_getglobal) _fcitx_lua_getglobal;
+extern decltype(&::lua_touserdata) _fcitx_lua_touserdata;
+extern decltype(&::lua_settop) _fcitx_lua_settop;
+extern decltype(&::lua_close) _fcitx_lua_close;
+extern decltype(&::luaL_newstate) _fcitx_luaL_newstate;
 
 FCITX_DECLARE_LOG_CATEGORY(lua_log);
 #define FCITX_LUA_INFO() FCITX_LOGC(::fcitx::lua_log, Info)

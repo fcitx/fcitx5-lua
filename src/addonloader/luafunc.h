@@ -1,6 +1,10 @@
 FOREACH_LUA_FUNCTION(luaL_openlibs)
 FOREACH_LUA_FUNCTION(luaL_requiref)
+#ifdef lua_newuserdata
+FOREACH_LUA_FUNCTION(lua_newuserdatauv)
+#else
 FOREACH_LUA_FUNCTION(lua_newuserdata)
+#endif
 FOREACH_LUA_FUNCTION(lua_setglobal)
 FOREACH_LUA_FUNCTION(luaL_loadfilex)
 FOREACH_LUA_FUNCTION(lua_pcallk)
@@ -26,4 +30,3 @@ FOREACH_LUA_FUNCTION(luaL_loadstring)
 FOREACH_LUA_FUNCTION(luaL_checkinteger)
 FOREACH_LUA_FUNCTION(luaL_checklstring)
 FOREACH_LUA_FUNCTION(lua_rawseti)
-FOREACH_LUA_FUNCTION(luaL_error)

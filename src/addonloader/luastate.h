@@ -7,6 +7,7 @@
 #ifndef _FCITX5_LUA_ADDONLOADER_LUASTATE_H_
 #define _FCITX5_LUA_ADDONLOADER_LUASTATE_H_
 
+#include "luastate_details.h"
 #include <fcitx-utils/library.h>
 #include <lua.hpp>
 #include <memory>
@@ -17,27 +18,36 @@ struct LuaState {
 public:
     LuaState(Library &library);
 
-#define DEFINE_LUA_API_FUNCTION(NAME)                                          \
-    template <typename... Args>                                                \
-    auto NAME(Args &&... args) {                                               \
-        return NAME##_(state_.get(), std::forward<Args>(args)...);             \
-    }
-
 #define FOREACH_LUA_FUNCTION DEFINE_LUA_API_FUNCTION
 #include "luafunc.h"
 #undef FOREACH_LUA_FUNCTION
 
-    void pop(int n) { this->lua_settop(-n - 1); }
+    template <typename... Args>
+    auto luaL_error(Args &&... args) {
+        return luaL_error_(state_.get(), std::forward<Args>(args)...);
+    }
 
 private:
     Library *luaLibrary_;
 
-#define DECLARE_LUA_FUNCTION_PTR(NAME) decltype(&::NAME) NAME##_ = nullptr;
 #define FOREACH_LUA_FUNCTION DECLARE_LUA_FUNCTION_PTR
 #include "luafunc.h"
 #undef FOREACH_LUA_FUNCTION
-    std::unique_ptr<lua_State, decltype(&lua_close)> state_;
+    decltype(&::luaL_error) luaL_error_ = nullptr;
+    std::unique_ptr<lua_State, std::function<void(lua_State *)>> state_;
 };
+
+#define FOREACH_LUA_FUNCTION DEFINE_BRIDGE_LUA_API_FUNCTION
+#include "luafunc.h"
+#undef FOREACH_LUA_FUNCTION
+
+// luaL_error is vaarg function, which won't work with the type cast and we
+// don't need to handle that for it either. So just manually define the
+// redirection here.
+template <typename StatePtr, typename... Args>
+auto luaL_error(const StatePtr &state, Args &&... args) {
+    return state->luaL_error(std::forward<Args>(args)...);
+}
 
 } // namespace fcitx
 
