@@ -123,7 +123,7 @@ private:
     // @function currentInputMethod
     // @treturn string the unique string of current input method.
     DEFINE_LUA_FUNCTION(currentInputMethod);
-    /// Add a string converter for commiting string.
+    /// Add a string converter for committing string.
     // @function addConverter
     // @string function the function name.
     // @treturn int A unique integer identifier.
