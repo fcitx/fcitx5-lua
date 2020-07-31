@@ -31,11 +31,11 @@ LuaAddonLoader::LuaAddonLoader() {
     _fcitx_luaL_newstate = reinterpret_cast<decltype(_fcitx_luaL_newstate)>(
         luaLibrary_.resolve("luaL_newstate"));
 #else
-    _fcitx_lua_getglobal = lua_getglobal;
-    _fcitx_lua_touserdata = lua_touserdata;
-    _fcitx_lua_settop = lua_settop;
-    _fcitx_lua_close = lua_close;
-    _fcitx_luaL_newstate = luaL_newstate;
+    _fcitx_lua_getglobal = &::lua_getglobal;
+    _fcitx_lua_touserdata = &::lua_touserdata;
+    _fcitx_lua_settop = &::lua_settop;
+    _fcitx_lua_close = &::lua_close;
+    _fcitx_luaL_newstate = &::luaL_newstate;
 #endif
 
     if (!_fcitx_lua_getglobal || !_fcitx_lua_touserdata || !_fcitx_lua_settop ||

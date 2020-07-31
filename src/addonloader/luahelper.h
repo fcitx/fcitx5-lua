@@ -89,6 +89,12 @@ int LuaReturn(LuaState *s, const std::tuple<Args...> &args) {
 
 constexpr char kLuaModuleName[] = "__fcitx_luaaddon";
 
+extern decltype(&::luaL_newstate) _fcitx_luaL_newstate;
+extern decltype(&::lua_getglobal) _fcitx_lua_getglobal;
+extern decltype(&::lua_touserdata) _fcitx_lua_touserdata;
+extern decltype(&::lua_settop) _fcitx_lua_settop;
+extern decltype(&::lua_close) _fcitx_lua_close;
+
 LuaAddonState *GetLuaAddonState(lua_State *lua);
 
 FCITX_DECLARE_LOG_CATEGORY(lua_log);
