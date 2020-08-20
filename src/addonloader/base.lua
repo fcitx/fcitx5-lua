@@ -73,7 +73,9 @@ fcitx.QuickPhraseAction = {
     TypeToBuffer = 1,
     DigitSelection = 2,
     AlphaSelection = 3,
-    NoneSelection = 4
+    NoneSelection = 4,
+    DoNothing = 5,
+    AutoCommit = 6,
 }
 
 local function dump(o)
