@@ -11,6 +11,7 @@
 #include <fcitx-utils/eventdispatcher.h>
 #include <fcitx-utils/log.h>
 #include <fcitx-utils/standardpath.h>
+#include <fcitx-utils/testing.h>
 #include <fcitx/addonmanager.h>
 #include <fcitx/inputmethodmanager.h>
 #include <fcitx/instance.h>
@@ -21,7 +22,8 @@ using namespace fcitx;
 
 void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
     dispatcher->schedule([instance]() {
-        auto luaaddonloader = instance->addonManager().addon("luaaddonloader");
+        auto luaaddonloader =
+            instance->addonManager().addon("luaaddonloader", true);
         FCITX_ASSERT(luaaddonloader);
         auto luaaddon = instance->addonManager().addon("testlua");
         FCITX_ASSERT(luaaddon);
@@ -79,23 +81,20 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
 void runInstance() {}
 
 int main() {
-    setenv("SKIP_FCITX_PATH", "1", 1);
-    // Path to library
-    setenv("FCITX_ADDON_DIRS",
-           stringutils::concat(TESTING_BINARY_DIR "/src/addonloader:",
-                               StandardPath::fcitxPath("addondir"))
-               .data(),
-           1);
+    setupTestingEnvironment(
+        TESTING_BINARY_DIR,
+        {"src/addonloader", StandardPath::fcitxPath("addondir")},
+        {"test", TESTING_SOURCE_DIR "/test",
+         StandardPath::fcitxPath("pkgdatadir", "testing")});
+
+    fcitx::Log::setLogRule("default=5,lua=5");
+    char arg0[] = "testlua";
+    char arg1[] = "--disable=all";
+    char arg2[] = "--enable=testim,testfrontend,luaaddonloader,imeapi,testlua";
+    char *argv[] = {arg0, arg1, arg2};
+    Instance instance(FCITX_ARRAY_SIZE(argv), argv);
     setenv("FCITX_DATA_HOME", "/Invalid/Path", 1);
     setenv("FCITX_CONFIG_HOME", "/Invalid/Path", 1);
-    setenv("FCITX_DATA_DIRS",
-           stringutils::concat(TESTING_SOURCE_DIR "/test:" TESTING_BINARY_DIR
-                                                  "/test:",
-                               StandardPath::fcitxPath("pkgdatadir", "testing"))
-               .data(),
-           1);
-    fcitx::Log::setLogRule("default=5,lua=5");
-    Instance instance(0, nullptr);
     instance.addonManager().registerDefaultLoader(nullptr);
     EventDispatcher dispatcher;
     dispatcher.attach(&instance.eventLoop());
