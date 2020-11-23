@@ -51,7 +51,7 @@ struct LuaForwardOrCast<OrigType *> {
                 std::get<I>(args))...);                                        \
     }                                                                          \
     template <typename... Args>                                                \
-    auto NAME(Args &&... args) {                                               \
+    auto NAME(Args &&...args) {                                                \
         using ArgType = decltype(LuaGetFunctionArgType(NAME##_));              \
         return _##NAME##_impl<ArgType>(                                        \
             std::index_sequence_for<int, Args...>{},                           \
@@ -62,7 +62,7 @@ struct LuaForwardOrCast<OrigType *> {
 
 #define DEFINE_BRIDGE_LUA_API_FUNCTION(NAME)                                   \
     template <typename StatePtr, typename... Args>                             \
-    auto NAME(const StatePtr &state, Args &&... args) {                        \
+    auto NAME(const StatePtr &state, Args &&...args) {                         \
         return state->NAME(std::forward<Args>(args)...);                       \
     }
 

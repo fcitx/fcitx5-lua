@@ -23,7 +23,7 @@ public:
 #undef FOREACH_LUA_FUNCTION
 
     template <typename... Args>
-    auto luaL_error(Args &&... args) {
+    auto luaL_error(Args &&...args) {
         return luaL_error_(state_.get(), std::forward<Args>(args)...);
     }
 
@@ -45,7 +45,7 @@ private:
 // don't need to handle that for it either. So just manually define the
 // redirection here.
 template <typename StatePtr, typename... Args>
-auto luaL_error(const StatePtr &state, Args &&... args) {
+auto luaL_error(const StatePtr &state, Args &&...args) {
     return state->luaL_error(std::forward<Args>(args)...);
 }
 

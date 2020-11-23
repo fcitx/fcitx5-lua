@@ -35,10 +35,15 @@ endif()
 
 configure_file(config.h.in config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+add_definitions(-DFCITX_GETTEXT_DOMAIN=\"fcitx5-lua\")
+fcitx5_add_i18n_definition()
 
 enable_testing()
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(po)
 
+fcitx5_translate_desktop_file(org.fcitx.Fcitx5.Addon.Lua.metainfo.xml.in
+    org.fcitx.Fcitx5.Addon.Lua.metainfo.xml XML)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/org.fcitx.Fcitx5.Addon.Lua.metainfo.xml" DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
