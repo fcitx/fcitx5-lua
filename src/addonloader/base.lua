@@ -104,8 +104,9 @@ local EventType = {
     KeyEvent = 0x0001000 | 0x5,
     SurroundingTextUpdated = 0x0001000 | 0x7,
     CursorRectChanged = 0x0001000 | 0x9,
-    InputMethodActivated = 0x0001000 | 0xA,
-    InputMethodDeactivated = 0x0001000 | 0xB,
+    SwitchInputMethod = 0x0001000 | 0xA,
+    InputMethodActivated = 0x0001000 | 0xB,
+    InputMethodDeactivated = 0x0001000 | 0xC,
 
     CommitString = 0x0002000 | 0x2,
     UpdatePreedit = 0x0002000 | 0x4,
