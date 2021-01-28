@@ -199,6 +199,7 @@ std::tuple<int> LuaAddonState::watchEventImpl(int eventType,
                 return 1;
             });
         break;
+    case EventType::InputContextSwitchInputMethod:
     case EventType::InputContextInputMethodActivated:
     case EventType::InputContextInputMethodDeactivated:
         handler = watchEvent<InputMethodNotificationEvent>(
