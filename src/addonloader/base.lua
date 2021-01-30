@@ -113,4 +113,14 @@ local EventType = {
 
 fcitx.EventType = EventType
 
+local oldsetCurrentInputMethod=fcitx.setCurrentInputMethod
+local function setCurrentInputMethod(name,local_im)
+    if(local_im == nil) then
+        local_im = true
+    end    
+    oldsetCurrentInputMethod(name,local_im)
+end
+
+fcitx.setCurrentInputMethod = setCurrentInputMethod
+
 return fcitx

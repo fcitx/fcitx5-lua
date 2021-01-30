@@ -189,7 +189,7 @@ private:
     std::tuple<int> watchEventImpl(int eventType, const char *function);
     std::tuple<> unwatchEventImpl(int id);
     std::tuple<std::string> currentInputMethodImpl();
-    std::tuple<> setCurrentInputMethodImpl(const char *str);
+    std::tuple<> setCurrentInputMethodImpl(const char *str, bool local);
     std::tuple<std::string> currentProgramImpl();
     
     std::tuple<int> addConverterImpl(const char *function);
