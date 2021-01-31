@@ -23,6 +23,14 @@ function convert(str)
     return str
 end
 
+function testProgram()
+    return fcitx.currentProgram()
+end
+
+function testInputMethod()
+    return fcitx.currentInputMethod()
+end
+
 function testInvoke(config)
     if type(config) == "string" then
         assert(config == "ABC")

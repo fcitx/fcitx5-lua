@@ -31,9 +31,17 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         FCITX_ASSERT(imeapi);
     });
     dispatcher->schedule([dispatcher, instance]() {
-        instance->inputMethodManager().currentGroup();
+        // Setup the input method group with two input method
+        auto groupName = instance->inputMethodManager().currentGroup();
+        InputMethodGroup group(groupName);
+        group.inputMethodList().push_back(InputMethodGroupItem("keyboard-us"));
+        group.inputMethodList().push_back(InputMethodGroupItem("testim"));
+        group.setDefaultInputMethod("testim");
+        instance->inputMethodManager().setGroup(group);
+
         auto testfrontend = instance->addonManager().addon("testfrontend");
         auto testim = instance->addonManager().addon("testim");
+        auto luaaddon = instance->addonManager().addon("testlua");
         testim->call<ITestIM::setHandler>(
             [](const InputMethodEntry &, KeyEvent &keyEvent) {
                 if (keyEvent.key().states() != KeyState::NoState ||
@@ -48,28 +56,50 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
             });
         auto uuid =
             testfrontend->call<ITestFrontend::createInputContext>("testapp");
+        auto ic = instance->inputContextManager().findByUUID(uuid);
+        FCITX_ASSERT(ic);
+
+        // Test with the converter in test.lua
         testfrontend->call<ITestFrontend::keyEvent>(uuid, Key("a"), false);
         testfrontend->call<ITestFrontend::keyEvent>(uuid, Key("b"), false);
         testfrontend->call<ITestFrontend::keyEvent>(uuid, Key("c"), false);
         testfrontend->call<ITestFrontend::keyEvent>(uuid, Key("d"), false);
+
+        // Test lua currentInputMethod
+        auto ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(
+            ic, "testInputMethod", RawConfig{});
+        FCITX_INFO() << ret;
+        assert(ret.value() == "keyboard-us");
+
         testfrontend->call<ITestFrontend::keyEvent>(uuid, Key("Control+space"),
                                                     false);
-        testfrontend->call<ITestFrontend::destroyInputContext>(uuid);
 
-        auto luaaddon = instance->addonManager().addon("testlua");
+        // Test lua currentProgram
+        ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(ic, "testProgram",
+                                                           RawConfig{});
+        FCITX_INFO() << ret;
+        assert(ret.value() == "testapp");
+
+        // Test lua currentInputMethod after ctrl space
+        ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(
+            ic, "testInputMethod", RawConfig{});
+        FCITX_INFO() << ret;
+        assert(ret.value() == "testim");
+
+        // Test with complex value with invokeLuaFunction
         FCITX_ASSERT(luaaddon);
         RawConfig config;
         config["A"].setValue("5");
         config["A"]["Q"].setValue("4");
         FCITX_INFO() << config;
-        auto ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(
-            nullptr, "testInvoke", config);
+        ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(ic, "testInvoke",
+                                                           config);
         FCITX_INFO() << ret;
         assert(ret["B"]["E"]["F"].value() == "7");
         RawConfig strConfig;
         strConfig.setValue("ABC");
-        ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(
-            nullptr, "testInvoke", strConfig);
+        ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(ic, "testInvoke",
+                                                           strConfig);
         assert(ret.value() == "DEF");
         FCITX_INFO() << ret;
 
