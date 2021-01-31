@@ -29,6 +29,13 @@ struct LuaArgTypeTraits<int> {
     static void ret(LuaState *lua, int v) { lua_pushinteger(lua, v); }
 };
 template <>
+struct LuaArgTypeTraits<bool> {
+    static bool check(LuaState *lua, int arg) {
+        return lua_toboolean(lua, arg);
+    }
+    static void ret(LuaState *lua, bool v) { lua_pushboolean(lua, v); }
+};
+template <>
 struct LuaArgTypeTraits<const char *> {
     static const char *check(LuaState *lua, int arg) {
         return luaL_checkstring(lua, arg);

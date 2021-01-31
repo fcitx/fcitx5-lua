@@ -123,6 +123,14 @@ private:
     // @function currentInputMethod
     // @treturn string the unique string of current input method.
     DEFINE_LUA_FUNCTION(currentInputMethod);
+    /// Change the current input method
+    // @function setCurrentInputMethod
+    // @string the unique string of the input method name.
+    DEFINE_LUA_FUNCTION(setCurrentInputMethod);
+    /// Return the current program name
+    // @function getCurrentProgramName
+    // @treturn string the string of current program name.
+    DEFINE_LUA_FUNCTION(currentProgram);
     /// Add a string converter for committing string.
     // @function addConverter
     // @string function the function name.
@@ -181,6 +189,8 @@ private:
     std::tuple<int> watchEventImpl(int eventType, const char *function);
     std::tuple<> unwatchEventImpl(int id);
     std::tuple<std::string> currentInputMethodImpl();
+    std::tuple<> setCurrentInputMethodImpl(const char *str, bool local);
+    std::tuple<std::string> currentProgramImpl();
 
     std::tuple<int> addConverterImpl(const char *function);
     std::tuple<> removeConverterImpl(int id);

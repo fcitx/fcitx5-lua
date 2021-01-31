@@ -74,6 +74,8 @@ LuaAddonState::LuaAddonState(Library &luaLibrary, const std::string &name,
             {"watchEvent", &LuaAddonState::watchEvent},
             {"unwatchEvent", &LuaAddonState::unwatchEvent},
             {"currentInputMethod", &LuaAddonState::currentInputMethod},
+            {"setCurrentInputMethod", &LuaAddonState::setCurrentInputMethod},
+            {"currentProgram", &LuaAddonState::currentProgram},
             {"addConverter", &LuaAddonState::addConverter},
             {"removeConverter", &LuaAddonState::removeConverter},
             {"addQuickPhraseHandler", &LuaAddonState::addQuickPhraseHandler},
@@ -231,6 +233,23 @@ std::tuple<std::string> LuaAddonState::currentInputMethodImpl() {
         return {instance_->inputMethod(ic)};
     }
     return {""};
+}
+
+std::tuple<std::string> LuaAddonState::currentProgramImpl() {
+    auto ic = inputContext_.get();
+    if (ic) {
+        return {ic->program()};
+    }
+    return {""};
+}
+
+std::tuple<> LuaAddonState::setCurrentInputMethodImpl(const char *str,
+                                                      bool local) {
+    auto ic = inputContext_.get();
+    if (ic) {
+        instance_->setCurrentInputMethod(ic, str, local);
+    }
+    return {};
 }
 
 std::tuple<int> LuaAddonState::addConverterImpl(const char *function) {
