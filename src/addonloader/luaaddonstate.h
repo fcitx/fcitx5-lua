@@ -191,7 +191,7 @@ private:
     std::tuple<std::string> currentInputMethodImpl();
     std::tuple<> setCurrentInputMethodImpl(const char *str, bool local);
     std::tuple<std::string> currentProgramImpl();
-    
+
     std::tuple<int> addConverterImpl(const char *function);
     std::tuple<> removeConverterImpl(int id);
 

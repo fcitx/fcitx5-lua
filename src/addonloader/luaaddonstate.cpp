@@ -242,7 +242,8 @@ std::tuple<std::string> LuaAddonState::currentProgramImpl() {
     return {""};
 }
 
-std::tuple<> LuaAddonState::setCurrentInputMethodImpl(const char *str,bool local) {
+std::tuple<> LuaAddonState::setCurrentInputMethodImpl(const char *str,
+                                                      bool local) {
     auto ic = inputContext_.get();
     if (ic) {
         instance_->setCurrentInputMethod(ic, str, local);
