@@ -13,8 +13,6 @@
 #include <fcitx/addonmanager.h>
 #include <fcitx/instance.h>
 #include <quickphrase_public.h>
-///
-// @module fcitx
 
 namespace fcitx {
 
@@ -62,6 +60,8 @@ private:
     std::unique_ptr<HandlerTableEntry<EventHandler>> handler_;
 };
 
+///
+// @module fcitx
 class Converter {
 public:
     Converter(std::string functionName, ScopedConnection connection)
@@ -110,9 +110,10 @@ private:
     DEFINE_LUA_FUNCTION(log);
     /// Watch for a event from fcitx.
     // @function watchEvent
-    // @fcitx.EventType event Event Type.
+    // @int event Event Type.
     // @string function the function name.
     // @return A unique integer identifier.
+    // @see EventType
     DEFINE_LUA_FUNCTION(watchEvent);
     /// Unwatch a certain event.
     // @function unwatchEvent
@@ -125,10 +126,10 @@ private:
     DEFINE_LUA_FUNCTION(currentInputMethod);
     /// Change the current input method
     // @function setCurrentInputMethod
-    // @string the unique string of the input method name.
+    // @string name the unique string of the input method name.
     DEFINE_LUA_FUNCTION(setCurrentInputMethod);
     /// Return the current program name
-    // @function getCurrentProgramName
+    // @function currentProgram
     // @treturn string the string of current program name.
     DEFINE_LUA_FUNCTION(currentProgram);
     /// Add a string converter for committing string.

@@ -89,8 +89,16 @@
 	<td class="summary">Return the current input method.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#setCurrentInputMethod">setCurrentInputMethod (name)</a></td>
+	<td class="summary">Change the current input method</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#currentProgram">currentProgram ()</a></td>
+	<td class="summary">Return the current program name</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#addConverter">addConverter (function)</a></td>
-	<td class="summary">Add a string converter for commiting string.</td>
+	<td class="summary">Add a string converter for committing string.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#removeConverter">removeConverter (id)</a></td>
@@ -134,6 +142,10 @@
 	<tr>
 	<td class="name" nowrap><a href="#QuickPhraseAction">QuickPhraseAction</a></td>
 	<td class="summary">The lua version of fcitx::QuickPhraseAction.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#EventType">EventType</a></td>
+	<td class="summary">The lua version of fcitx::EventType.</td>
 	</tr>
 </table>
 
@@ -184,7 +196,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
         The version of fcitx.
     </ol>
 
@@ -204,7 +216,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
         The last commit string from fcitx.
     </ol>
 
@@ -223,11 +235,11 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">str</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          string to be split.
         </li>
         <li><span class="parameter">delim</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          string used as delimiter.
         </li>
     </ul>
@@ -235,7 +247,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.6">table</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
         An array of string split by delimiter, empty string will
  be skipped.
     </ol>
@@ -255,7 +267,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">str</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          log string.
         </li>
     </ul>
@@ -276,11 +288,11 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">event</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
-         Event Type string.
+            <span class="types"><span class="type">int</span></span>
+         Event Type.
         </li>
         <li><span class="parameter">function</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          the function name.
         </li>
     </ul>
@@ -292,6 +304,10 @@
     </ol>
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="../modules/fcitx.html#EventType">EventType</a>
+    </ul>
 
 
 </dd>
@@ -332,8 +348,49 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
         the unique string of current input method.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setCurrentInputMethod"></a>
+    <strong>setCurrentInputMethod (name)</strong>
+    </dt>
+    <dd>
+    Change the current input method
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">name</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         the unique string of the input method name.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "currentProgram"></a>
+    <strong>currentProgram ()</strong>
+    </dt>
+    <dd>
+    Return the current program name
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        the string of current program name.
     </ol>
 
 
@@ -345,13 +402,13 @@
     <strong>addConverter (function)</strong>
     </dt>
     <dd>
-    Add a string converter for commiting string.
+    Add a string converter for committing string.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">function</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          the function name.
         </li>
     </ul>
@@ -403,7 +460,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">function</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          the function name.
         </li>
     </ul>
@@ -455,7 +512,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">str</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          string to be commit to input context.
         </li>
     </ul>
@@ -482,13 +539,13 @@
 
         </li>
         <li><span class="parameter">path</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
 
         </li>
         <li><span class="parameter">suffix</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
 
 
 
@@ -498,7 +555,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.6">table</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
         A table of full file name.
     </ol>
 
@@ -521,7 +578,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">str</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          UTF16 string.
         </li>
     </ul>
@@ -529,7 +586,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
         UTF8 string or empty string if it fails.
     </ol>
 
@@ -548,7 +605,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">str</span>
-            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
          UTF8 string.
         </li>
     </ul>
@@ -556,7 +613,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
         UTF16 string or empty string if it fails.
     </ol>
 
@@ -759,6 +816,94 @@
 
 
         </li>
+        <li><span class="parameter">DoNothing</span>
+
+
+
+        </li>
+        <li><span class="parameter">AutoCommit</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "EventType"></a>
+    <strong>EventType</strong>
+    </dt>
+    <dd>
+    The lua version of fcitx::EventType.  It represent the value of different
+ type of events.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">ContextCreated</span>
+
+
+
+        </li>
+        <li><span class="parameter">ContextDestroyed</span>
+
+
+
+        </li>
+        <li><span class="parameter">FocusOut</span>
+
+
+
+        </li>
+        <li><span class="parameter">FocusIn</span>
+
+
+
+        </li>
+        <li><span class="parameter">KeyEvent</span>
+
+
+
+        </li>
+        <li><span class="parameter">SurroundingTextUpdated</span>
+
+
+
+        </li>
+        <li><span class="parameter">CursorRectChanged</span>
+
+
+
+        </li>
+        <li><span class="parameter">SwitchInputMethod</span>
+
+
+
+        </li>
+        <li><span class="parameter">InputMethodActivated</span>
+
+
+
+        </li>
+        <li><span class="parameter">InputMethodDeactivated</span>
+
+
+
+        </li>
+        <li><span class="parameter">CommitString</span>
+
+
+
+        </li>
+        <li><span class="parameter">UpdatePreedit</span>
+
+
+
+        </li>
     </ul>
 
 
@@ -773,7 +918,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2020-04-01 11:04:29 </i>
+<i style="float:right;">Last updated 2021-01-31 07:31:38 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

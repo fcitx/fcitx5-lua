@@ -3,6 +3,7 @@
 --
 -- SPDX-License-Identifier: LGPL-2.1-or-later
 --
+
 --- Fcitx module
 -- @module fcitx
 local fcitx = require("fcitx.core")

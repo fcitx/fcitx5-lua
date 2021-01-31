@@ -3,6 +3,7 @@
 --
 -- SPDX-License-Identifier: LGPL-2.1-or-later
 --
+
 --- Google Pinyin-like api module.
 -- @module ime
 
