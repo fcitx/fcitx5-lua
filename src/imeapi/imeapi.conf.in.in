@@ -2,6 +2,7 @@
 Name=Lua IME API
 Comment=Lua IME API support
 Category=Module
+Version=@PROJECT_VERSION@
 Type=Lua
 OnDemand=False
 Configurable=False

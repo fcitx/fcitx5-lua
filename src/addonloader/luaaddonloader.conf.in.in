@@ -2,6 +2,7 @@
 Name=Lua Addon Loader
 Comment=Lua Addon support
 Category=Module
+Version=@PROJECT_VERSION@
 Type=SharedLibrary
 OnDemand=True
 Configurable=False
