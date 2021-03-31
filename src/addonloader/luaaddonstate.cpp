@@ -419,6 +419,8 @@ std::tuple<std::string> LuaAddonState::UTF16ToUTF8Impl(const char *str) {
                        (1 << 16);
                 i += 2;
             }
+        } else if (0xDC00 <= data[i] && data[i] <= 0xDFFF) {
+            return {};
         }
         result.append(utf8::UCS4ToUTF8(ucs4));
     }
