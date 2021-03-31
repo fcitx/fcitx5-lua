@@ -103,6 +103,20 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         assert(ret.value() == "DEF");
         FCITX_INFO() << ret;
 
+        std::string testString = "ABC测试𐐒DEF";
+        strConfig.setValue(testString);
+        ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(
+            ic, "testUtf16Conversion", strConfig);
+        uint16_t data[] = {0x41,   0x42, 0x43, 0x6d4b, 0x8bd5, 0xd801,
+                           0xdc12, 0x44, 0x45, 0x46,   0x0};
+        FCITX_ASSERT(ret.value().size() == sizeof(data));
+        FCITX_ASSERT(memcmp(ret.value().data(), data, sizeof(data)) == 0);
+
+        strConfig.setValue(ret.value());
+        ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(
+            ic, "testUtf8Conversion", strConfig);
+        FCITX_ASSERT(ret.value() == testString) << ret;
+
         dispatcher->detach();
         instance->exit();
     });

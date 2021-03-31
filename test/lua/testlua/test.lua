@@ -47,3 +47,12 @@ function testInvoke(config)
     }
     return config
 end
+
+function testUtf16Conversion(str)
+    fcitx.log(str);
+    return fcitx.UTF8ToUTF16(str)
+end
+
+function testUtf8Conversion(str)
+    return fcitx.UTF16ToUTF8(str)
+end

@@ -401,21 +401,16 @@ LuaAddonState::standardPathLocateImpl(int type, const char *path,
 }
 
 std::tuple<std::string> LuaAddonState::UTF16ToUTF8Impl(const char *str) {
-    auto len = strlen(str);
-    if (len % 2 != 0) {
-        return {};
-    }
-    len /= 2;
-    std::string result;
     auto data = reinterpret_cast<const uint16_t *>(str);
+    std::string result;
     size_t i = 0;
-    while (i < len) {
+    while (data[i]) {
         uint32_t ucs4 = 0;
         if (data[i] < 0xD800 || data[i] > 0xDFFF) {
             ucs4 = data[i];
             i += 1;
         } else if (0xD800 <= data[i] && data[i] <= 0xDBFF) {
-            if (i + 1 >= len) {
+            if (!data[i + 1]) {
                 return {};
             }
             if (0xDC00 <= data[i + 1] && data[i + 1] <= 0xDFFF) {
@@ -440,27 +435,27 @@ std::tuple<std::string> LuaAddonState::UTF8ToUTF16Impl(const char *str) {
         if (ucs4 < 0x10000) {
             result.push_back(static_cast<uint16_t>(ucs4));
         } else if (ucs4 < 0x110000) {
-            result.push_back(0xD800 | (((ucs4 >> 16) & 0x1f) - 1) |
-                             (ucs4 >> 10));
+            result.push_back(0xD800 | (((ucs4 - 0x10000) >> 10) & 0x3ff));
             result.push_back(0xDC00 | (ucs4 & 0x3ff));
         } else {
             return {};
         }
     }
     result.push_back(0);
-    return std::string(reinterpret_cast<char *>(result.data()));
+    return std::string(reinterpret_cast<char *>(result.data()),
+                       result.size() * sizeof(uint16_t));
 }
 
 void rawConfigToLua(LuaState *state, const RawConfig &config) {
     if (!config.hasSubItems()) {
-        lua_pushstring(state, config.value().data());
+        lua_pushlstring(state, config.value().data(), config.value().size());
         return;
     }
 
     lua_newtable(state);
     if (!config.value().empty()) {
         lua_pushstring(state, "");
-        lua_pushstring(state, config.value().data());
+        lua_pushlstring(state, config.value().data(), config.value().size());
         lua_rawset(state, -3);
     }
     if (config.hasSubItems()) {
@@ -478,7 +473,8 @@ void luaToRawConfig(LuaState *state, RawConfig &config) {
     int type = lua_type(state, -1);
     if (type == LUA_TSTRING) {
         if (auto str = lua_tostring(state, -1)) {
-            config.setValue(str);
+            auto l = lua_rawlen(state, -1);
+            config.setValue(std::string(str, l));
         }
         return;
     }

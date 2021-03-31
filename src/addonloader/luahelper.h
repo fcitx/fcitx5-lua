@@ -45,7 +45,7 @@ struct LuaArgTypeTraits<const char *> {
 template <>
 struct LuaArgTypeTraits<std::string> {
     static void ret(LuaState *lua, const std::string &s) {
-        lua_pushstring(lua, s.data());
+        lua_pushlstring(lua, s.data(), s.size());
     }
 };
 template <>
@@ -53,7 +53,7 @@ struct LuaArgTypeTraits<std::vector<std::string>> {
     static void ret(LuaState *lua, const std::vector<std::string> &s) {
         lua_createtable(lua, s.size(), 0);
         for (size_t i = 0; i < s.size(); i++) {
-            lua_pushstring(lua, s[i].data());
+            lua_pushlstring(lua, s[i].data(), s[i].size());
             lua_rawseti(lua, -2, i + 1); /* In lua indices start at 1 */
         }
     }
