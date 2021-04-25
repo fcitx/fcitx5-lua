@@ -179,16 +179,16 @@ std::tuple<int> LuaAddonState::watchEventImpl(int eventType,
     case EventType::InputContextKeyEvent:
         handler = watchEvent<KeyEvent>(
             EventType::InputContextKeyEvent, newId,
-            [](std::unique_ptr<LuaState> &state, KeyEvent &event_) -> int {
-                lua_pushinteger(state, event_.key().sym());
-                lua_pushinteger(state, event_.key().states());
-                lua_pushboolean(state, event_.isRelease());
+            [](std::unique_ptr<LuaState> &state, KeyEvent &event) -> int {
+                lua_pushinteger(state, event.key().sym());
+                lua_pushinteger(state, event.key().states());
+                lua_pushboolean(state, event.isRelease());
                 return 3;
             },
-            [](std::unique_ptr<LuaState> &state, KeyEvent &event_) {
+            [](std::unique_ptr<LuaState> &state, KeyEvent &event) {
                 auto b = lua_toboolean(state, -1);
                 if (b) {
-                    event_.filterAndAccept();
+                    event.filterAndAccept();
                 }
             });
         break;
@@ -196,19 +196,27 @@ std::tuple<int> LuaAddonState::watchEventImpl(int eventType,
         handler = watchEvent<CommitStringEvent>(
             EventType::InputContextCommitString, newId,
             [](std::unique_ptr<LuaState> &state,
-               CommitStringEvent &event_) -> int {
-                lua_pushstring(state, event_.text().c_str());
+               CommitStringEvent &event) -> int {
+                lua_pushstring(state, event.text().c_str());
                 return 1;
             });
         break;
-    case EventType::InputContextSwitchInputMethod:
     case EventType::InputContextInputMethodActivated:
     case EventType::InputContextInputMethodDeactivated:
         handler = watchEvent<InputMethodNotificationEvent>(
             static_cast<EventType>(eventType), newId,
             [](std::unique_ptr<LuaState> &state,
-               InputMethodNotificationEvent &event_) -> int {
-                lua_pushstring(state, event_.name().c_str());
+               InputMethodNotificationEvent &event) -> int {
+                lua_pushstring(state, event.name().c_str());
+                return 1;
+            });
+        break;
+    case EventType::InputContextSwitchInputMethod:
+        handler = watchEvent<InputContextSwitchInputMethodEvent>(
+            static_cast<EventType>(eventType), newId,
+            [](std::unique_ptr<LuaState> &state,
+               InputContextSwitchInputMethodEvent &event) -> int {
+                lua_pushstring(state, event.oldInputMethod().c_str());
                 return 1;
             });
         break;
