@@ -6,7 +6,7 @@ Version=@PROJECT_VERSION@
 Type=SharedLibrary
 OnDemand=True
 Configurable=False
-Library=luaaddonloader
+Library=libluaaddonloader
 
 [Addon/OptionalDependencies]
 0=quickphrase
