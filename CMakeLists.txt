@@ -16,9 +16,9 @@ find_package(Pthread REQUIRED)
 find_package(Fcitx5Module REQUIRED COMPONENTS TestFrontend TestIM QuickPhrase)
 
 option(USE_DLOPEN "Use dlopen to load lua library." On)
+option(ENABLE_TEST "Build Test" On)
 
 include("${FCITX_INSTALL_CMAKECONFIG_DIR}/Fcitx5Utils/Fcitx5CompilerSettings.cmake")
-include(Helper)
 
 if (NOT TARGET Lua::_LuaLibrary)
     if (USE_DLOPEN)
@@ -38,10 +38,13 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_definitions(-DFCITX_GETTEXT_DOMAIN=\"fcitx5-lua\")
 fcitx5_add_i18n_definition()
 
-enable_testing()
 add_subdirectory(src)
-add_subdirectory(test)
 add_subdirectory(po)
+
+if (ENABLE_TEST)
+    enable_testing()
+    add_subdirectory(test)
+endif()
 
 fcitx5_translate_desktop_file(org.fcitx.Fcitx5.Addon.Lua.metainfo.xml.in
     org.fcitx.Fcitx5.Addon.Lua.metainfo.xml XML)
