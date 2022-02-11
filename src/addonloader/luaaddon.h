@@ -22,7 +22,7 @@ class AddonManager;
 
 class LuaAddon : public AddonInstance {
 public:
-    LuaAddon(Library &luaLibrary, const AddonInfo &info, AddonManager *manager);
+    LuaAddon(Library *luaLibrary, const AddonInfo &info, AddonManager *manager);
 
     void reloadConfig() override;
 

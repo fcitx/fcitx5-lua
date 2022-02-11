@@ -16,7 +16,7 @@ namespace fcitx {
 
 struct LuaState {
 public:
-    LuaState(Library &library);
+    LuaState(Library *library);
 
 #define FOREACH_LUA_FUNCTION DEFINE_LUA_API_FUNCTION
 #include "luafunc.h"

@@ -78,7 +78,7 @@ private:
 
 class LuaAddonState {
 public:
-    LuaAddonState(Library &luaLibrary, const std::string &name,
+    LuaAddonState(Library *luaLibrary, const std::string &name,
                   const std::string &library, AddonManager *manager);
 
     operator LuaState *() { return state_.get(); }

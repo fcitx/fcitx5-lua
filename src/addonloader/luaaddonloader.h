@@ -22,7 +22,7 @@ public:
     AddonInstance *load(const AddonInfo &info, AddonManager *manager) override;
 
 private:
-    Library luaLibrary_{LUA_LIBRARY};
+    std::unique_ptr<Library> luaLibrary_;
 };
 
 class LuaAddonLoaderAddon : public AddonInstance {

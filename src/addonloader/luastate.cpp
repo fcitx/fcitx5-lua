@@ -18,8 +18,8 @@
 #define FILL_LUA_API(FUNCTION) FUNCTION##_ = GET_LUA_API(FUNCTION)
 
 namespace fcitx {
-LuaState::LuaState(Library &library)
-    : luaLibrary_(&library), state_(nullptr, _fcitx_lua_close) {
+LuaState::LuaState(Library *library)
+    : luaLibrary_(library), state_(nullptr, _fcitx_lua_close) {
     // Resolve all required lua function first.
 #define FOREACH_LUA_FUNCTION(NAME)                                             \
     FILL_LUA_API(NAME);                                                        \

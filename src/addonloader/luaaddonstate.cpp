@@ -46,7 +46,7 @@ static void LuaPrintError(LuaState *lua) {
     }
 }
 
-LuaAddonState::LuaAddonState(Library &luaLibrary, const std::string &name,
+LuaAddonState::LuaAddonState(Library *luaLibrary, const std::string &name,
                              const std::string &library, AddonManager *manager)
     : instance_(manager->instance()),
       state_(std::make_unique<LuaState>(luaLibrary)) {
