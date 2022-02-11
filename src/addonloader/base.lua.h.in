@@ -1,3 +1,14 @@
+/*
+ * SPDX-FileCopyrightText: 2022~2022 CSSlayer <wengxt@gmail.com>
+ *
+ * SPDX-License-Identifier: LGPL-2.1-or-later
+ *
+ */
+#ifndef _FCITX5_LUA_ADDONLOADER_BASE_LUA_H_IN_
+#define _FCITX5_LUA_ADDONLOADER_BASE_LUA_H_IN_
+
 constexpr char baseLua[] = R"foo(
 @BASE_LUA_CONTENT@
 )foo";
+
+#endif // _FCITX5_LUA_ADDONLOADER_BASE_LUA_H_IN_
