@@ -5,7 +5,7 @@
  *
  */
 #include "luaaddonstate.h"
-#include "baselua.h"
+#include "base.lua.h"
 #include <fcitx-utils/standardpath.h>
 #include <fcitx-utils/utf8.h>
 #include <fcitx/addonmanager.h>
@@ -92,7 +92,7 @@ LuaAddonState::LuaAddonState(Library &luaLibrary, const std::string &name,
     };
     auto open_fcitx = [](lua_State *state) {
         auto s = GetLuaAddonState(state)->state_.get();
-        if (int rv = luaL_loadstring(s, baselua) ||
+        if (int rv = luaL_loadstring(s, baseLua) ||
                      lua_pcallk(s, 0, LUA_MULTRET, 0, 0, nullptr);
             rv != LUA_OK) {
             LuaPError(rv, "luaL_loadbuffer() failed");

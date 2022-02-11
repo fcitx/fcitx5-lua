@@ -1,0 +1,3 @@
+constexpr char baseLua[] = R"foo(
+@BASE_LUA_CONTENT@
+)foo";
