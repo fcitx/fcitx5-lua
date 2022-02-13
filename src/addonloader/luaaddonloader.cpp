@@ -14,7 +14,7 @@ namespace fcitx {
 
 LuaAddonLoader::LuaAddonLoader() {
 #ifdef USE_DLOPEN
-    luaLibrary_ = std::make_unique<Library>(LUA_LIBRARY);
+    luaLibrary_ = std::make_unique<Library>(LUA_LIBRARY_PATH);
     luaLibrary_->load(
         {LibraryLoadHint::NewNameSpace, LibraryLoadHint::DefaultHint});
     if (!luaLibrary_->loaded()) {

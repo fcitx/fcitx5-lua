@@ -33,6 +33,27 @@ if (NOT TARGET Lua::_LuaLibrary)
     endif()
 endif()
 
+function(_RESOLVE_LIBRARY_PATH _FILE_NAME _LIBRARY_PATH)
+    if (CMAKE_OBJDUMP)
+        execute_process (
+            COMMAND ${CMAKE_OBJDUMP} -p "${_LIBRARY_PATH}"
+            RESULT_VARIABLE STATUS
+            OUTPUT_VARIABLE OBJDUMP_RESULT
+            ERROR_QUIET
+        )
+        string(REGEX REPLACE ".*SONAME +([^ ]+)\n.*$" "\\1" SONAME_OUT "${OBJDUMP_RESULT}")
+        if (SONAME_OUT)
+            set(_FILE_NAME_OUT "${SONAME_OUT}")
+        endif ()
+    endif()
+    if (NOT _FILE_NAME_OUT)
+        get_filename_component(_FILE_NAME_OUT "${_LIBRARY_PATH}" NAME)
+    endif()
+    set(${_FILE_NAME} ${_FILE_NAME_OUT} PARENT_SCOPE)
+endfunction()
+
+_RESOLVE_LIBRARY_PATH(LUA_LIBRARY_PATH  ${LUA_LIBRARY})
+
 configure_file(config.h.in config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_definitions(-DFCITX_GETTEXT_DOMAIN=\"fcitx5-lua\")
