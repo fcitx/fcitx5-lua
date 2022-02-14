@@ -52,7 +52,9 @@ function(_RESOLVE_LIBRARY_PATH _FILE_NAME _LIBRARY_PATH)
     set(${_FILE_NAME} ${_FILE_NAME_OUT} PARENT_SCOPE)
 endfunction()
 
-_RESOLVE_LIBRARY_PATH(LUA_LIBRARY_PATH  ${LUA_LIBRARY})
+if(USE_DLOPEN)
+    _RESOLVE_LIBRARY_PATH(LUA_LIBRARY_PATH  ${LUA_LIBRARY})
+endif()
 
 configure_file(config.h.in config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
