@@ -3,16 +3,16 @@
 # This file is distributed under the same license as the fcitx5-lua package.
 #
 # Translators:
-# Dmitry <dmitrydmitry761@gmail.com>, 2022
+# Dmitry <dmitrydmitry761@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-lua\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2022-06-02 20:25+0000\n"
+"POT-Creation-Date: 2023-11-03 20:24+0000\n"
 "PO-Revision-Date: 2020-04-01 16:17+0000\n"
-"Last-Translator: Dmitry <dmitrydmitry761@gmail.com>, 2022\n"
-"Language-Team: Russian (https://www.transifex.com/fcitx/teams/12005/ru/)\n"
+"Last-Translator: Dmitry <dmitrydmitry761@gmail.com>, 2023\n"
+"Language-Team: Russian (https://app.transifex.com/fcitx/teams/12005/ru/)\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,12 +24,12 @@ msgstr ""
 #: src/addonloader/luaaddonloader.conf.in:3
 #: src/addonloader/luaaddonloader.conf.in.in:3
 msgid "Lua Addon Loader"
-msgstr "Загрузчик аддонов Lua"
+msgstr "Загрузчик дополнений Lua"
 
 #: src/addonloader/luaaddonloader.conf.in:4
 #: src/addonloader/luaaddonloader.conf.in.in:4
 msgid "Lua Addon support"
-msgstr "Поддержка аддонов Lua"
+msgstr "Поддержка дополнений Lua"
 
 #: src/imeapi/imeapi.conf.in:3 src/imeapi/imeapi.conf.in.in:3
 msgid "Lua IME API"
