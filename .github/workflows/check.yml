@@ -62,7 +62,7 @@ jobs:
       - name: Build and Install lua
         uses: fcitx/github-actions@cmake
         with:
-          path: fcitx5-chinese-addons
+          path: fcitx5-lua
       - name: Test
         run: |
           ctest --test-dir fcitx5-lua/build
