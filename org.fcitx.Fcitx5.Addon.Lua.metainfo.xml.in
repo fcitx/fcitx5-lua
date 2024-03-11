@@ -6,8 +6,12 @@
   <project_license>LGPL-2.1+</project_license>
   <name>Lua support</name>
   <summary>Add Lua support to Fcitx 5</summary>
+  <developer id="org.fcitx-im">
+      <name>The Fcitx Team</name>
+  </developer>
   <url type="homepage">https://fcitx-im.org</url>
   <url type="bugtracker">https://github.com/fcitx/fcitx5-lua/issues</url>
+  <url type="vcs-browser">https://github.com/fcitx/fcitx5-lua</url>
   <project_group>Fcitx</project_group>
   <releases>
     <release version="5.0.12" date="2024-01-02"/>
