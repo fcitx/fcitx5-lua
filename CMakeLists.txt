@@ -10,7 +10,7 @@ include(ECMSetupVersion)
 include(ECMUninstallTarget)
 
 find_package(Lua 5.3 REQUIRED)
-find_package(Fcitx5Core REQUIRED)
+find_package(Fcitx5Core 5.1.12 REQUIRED)
 find_package(Gettext REQUIRED)
 find_package(Pthread REQUIRED)
 find_package(Fcitx5Module REQUIRED COMPONENTS QuickPhrase)

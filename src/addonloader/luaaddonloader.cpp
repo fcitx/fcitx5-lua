@@ -84,4 +84,4 @@ AddonInstance *LuaAddonLoaderFactory::create(AddonManager *manager) {
 
 } // namespace fcitx
 
-FCITX_ADDON_FACTORY(fcitx::LuaAddonLoaderFactory);
+FCITX_ADDON_FACTORY_V2(luaaddonloader, fcitx::LuaAddonLoaderFactory)
