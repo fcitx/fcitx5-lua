@@ -1,4 +1,4 @@
-add_library(luaaddonloader MODULE luastate.cpp luaaddonstate.cpp luaaddonloader.cpp luaaddon.cpp luahelper.cpp)
+add_fcitx5_addon(luaaddonloader luastate.cpp luaaddonstate.cpp luaaddonloader.cpp luaaddon.cpp luahelper.cpp)
 target_link_libraries(luaaddonloader Lua::_LuaLibrary Fcitx5::Core Fcitx5::Module::QuickPhrase)
 target_include_directories(luaaddonloader PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 install(TARGETS luaaddonloader DESTINATION "${CMAKE_INSTALL_LIBDIR}/fcitx5")
