@@ -6,6 +6,7 @@
  */
 #include "luahelper.h"
 #include "luaaddonstate.h"
+#include <fcitx-utils/log.h>
 
 namespace fcitx {
 
@@ -19,7 +20,7 @@ decltype(&::luaL_newstate) _fcitx_luaL_newstate;
 
 LuaAddonState *GetLuaAddonState(lua_State *lua) {
     _fcitx_lua_getglobal(lua, kLuaModuleName);
-    LuaAddonState **module =
+    auto **module =
         reinterpret_cast<LuaAddonState **>(_fcitx_lua_touserdata(lua, -1));
     _fcitx_lua_settop(lua, -2);
     return *module;

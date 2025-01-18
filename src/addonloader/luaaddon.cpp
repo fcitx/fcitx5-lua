@@ -5,6 +5,16 @@
  *
  */
 #include "luaaddon.h"
+#include "luaaddonstate.h"
+#include "luahelper.h"
+#include <exception>
+#include <fcitx-config/rawconfig.h>
+#include <fcitx-utils/library.h>
+#include <fcitx/addoninfo.h>
+#include <fcitx/inputcontext.h>
+#include <memory>
+#include <string>
+#include <utility>
 
 namespace fcitx {
 

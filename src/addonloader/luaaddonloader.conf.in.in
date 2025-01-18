@@ -8,6 +8,9 @@ OnDemand=True
 Configurable=False
 Library=libluaaddonloader
 
+[Addon/Dependencies]
+0=core:@REQUIRED_FCITX_VERSION@
+
 [Addon/OptionalDependencies]
 0=quickphrase
 

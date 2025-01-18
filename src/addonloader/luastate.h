@@ -9,7 +9,8 @@
 
 #include "luastate_details.h"
 #include <fcitx-utils/library.h>
-#include <lua.hpp>
+#include <functional>
+#include <lua.hpp> // IWYU pragma: export
 #include <memory>
 
 namespace fcitx {

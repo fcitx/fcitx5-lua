@@ -7,11 +7,13 @@
 #ifndef _FCITX5_LUA_ADDONLOADER_LUAADDONLOADER_H_
 #define _FCITX5_LUA_ADDONLOADER_LUAADDONLOADER_H_
 
-#include "config.h"
-#include "luahelper.h"
+#include <fcitx-utils/library.h>
 #include <fcitx/addonfactory.h>
+#include <fcitx/addoninfo.h>
 #include <fcitx/addoninstance.h>
 #include <fcitx/addonloader.h>
+#include <memory>
+#include <string>
 
 namespace fcitx {
 

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(fcitx5-lua VERSION 5.0.13)
 
+set(REQUIRED_FCITX_VERSION 5.1.12)
 find_package(ECM REQUIRED 1.0.0)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
@@ -10,7 +11,7 @@ include(ECMSetupVersion)
 include(ECMUninstallTarget)
 
 find_package(Lua 5.3 REQUIRED)
-find_package(Fcitx5Core 5.1.12 REQUIRED)
+find_package(Fcitx5Core ${REQUIRED_FCITX_VERSION} REQUIRED)
 find_package(Gettext REQUIRED)
 find_package(Pthread REQUIRED)
 find_package(Fcitx5Module REQUIRED COMPONENTS QuickPhrase)

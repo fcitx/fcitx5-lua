@@ -7,6 +7,7 @@
 #include "luastate.h"
 #include "config.h"
 #include "luahelper.h"
+#include <fcitx-utils/library.h>
 #include <stdexcept>
 
 #ifdef USE_DLOPEN

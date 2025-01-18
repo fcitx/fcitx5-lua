@@ -9,10 +9,29 @@
 
 #include "luahelper.h"
 #include "luastate.h"
+#include <exception>
+#include <fcitx-config/rawconfig.h>
+#include <fcitx-utils/handlertable.h>
+#include <fcitx-utils/library.h>
+#include <fcitx-utils/macros.h>
+#include <fcitx-utils/signals.h>
+#include <fcitx-utils/stringutils.h>
+#include <fcitx-utils/trackableobject.h>
+#include <fcitx-utils/tuplehelpers.h>
 #include <fcitx/addoninfo.h>
+#include <fcitx/addoninstance.h>
 #include <fcitx/addonmanager.h>
+#include <fcitx/event.h>
 #include <fcitx/instance.h>
+#include <functional>
+#include <map>
+#include <memory>
 #include <quickphrase_public.h>
+#include <string>
+#include <tuple>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 namespace fcitx {
 
@@ -208,7 +227,7 @@ private:
     std::tuple<std::string> UTF16ToUTF8Impl(const char *str);
 
     std::tuple<std::vector<std::string>>
-    standardPathLocateImpl(int type, const char *name, const char *suffix);
+    standardPathLocateImpl(int type, const char *path, const char *suffix);
 
     std::tuple<> commitStringImpl(const char *str);
     FCITX_ADDON_DEPENDENCY_LOADER(quickphrase, instance_->addonManager());

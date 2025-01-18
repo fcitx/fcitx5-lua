@@ -7,7 +7,14 @@
 #include "luaaddonloader.h"
 #include "config.h"
 #include "luaaddon.h"
+#include "luahelper.h"
+#include "luastate.h"
+#include <exception>
+#include <fcitx-utils/library.h>
+#include <fcitx/addoninfo.h>
+#include <fcitx/addoninstance.h>
 #include <fcitx/addonmanager.h>
+#include <memory>
 #include <stdexcept>
 
 namespace fcitx {
@@ -84,4 +91,4 @@ AddonInstance *LuaAddonLoaderFactory::create(AddonManager *manager) {
 
 } // namespace fcitx
 
-FCITX_ADDON_FACTORY_V2(luaaddonloader, fcitx::LuaAddonLoaderFactory)
+FCITX_ADDON_FACTORY_V2(luaaddonloader, fcitx::LuaAddonLoaderFactory);

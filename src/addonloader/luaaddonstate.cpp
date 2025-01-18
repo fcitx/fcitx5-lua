@@ -6,14 +6,36 @@
  */
 #include "luaaddonstate.h"
 #include "base.lua.h"
+#include "luahelper.h"
+#include "luastate.h"
+#include "quickphrase_public.h"
+#include <cstddef>
+#include <cstdint>
+#include <fcitx-config/rawconfig.h>
+#include <fcitx-utils/handlertable.h>
+#include <fcitx-utils/library.h>
 #include <fcitx-utils/standardpath.h>
+#include <fcitx-utils/stringutils.h>
+#include <fcitx-utils/trackableobject.h>
 #include <fcitx-utils/utf8.h>
 #include <fcitx/addonmanager.h>
+#include <fcitx/event.h>
+#include <fcitx/inputcontext.h>
+#include <fcitx/instance.h>
 #include <fcntl.h>
+#include <functional>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 namespace fcitx {
 
-static void LuaPError(int err, const char *s) {
+namespace {
+
+void LuaPError(int err, const char *s) {
     switch (err) {
     case LUA_ERRSYNTAX:
         FCITX_LUA_ERROR() << "syntax error during pre-compilation " << s;
@@ -40,11 +62,64 @@ static void LuaPError(int err, const char *s) {
     }
 }
 
-static void LuaPrintError(LuaState *lua) {
+void LuaPrintError(LuaState *lua) {
     if (lua_gettop(lua) > 0) {
         FCITX_LUA_ERROR() << lua_tostring(lua, -1);
     }
 }
+
+void rawConfigToLua(LuaState *state, const RawConfig &config) {
+    if (!config.hasSubItems()) {
+        lua_pushlstring(state, config.value().data(), config.value().size());
+        return;
+    }
+
+    lua_newtable(state);
+    if (!config.value().empty()) {
+        lua_pushstring(state, "");
+        lua_pushlstring(state, config.value().data(), config.value().size());
+        lua_rawset(state, -3);
+    }
+    if (config.hasSubItems()) {
+        auto options = config.subItems();
+        for (auto &option : options) {
+            auto subConfig = config.get(option);
+            lua_pushstring(state, option.data());
+            rawConfigToLua(state, *subConfig);
+            lua_rawset(state, -3);
+        }
+    }
+}
+
+void luaToRawConfig(LuaState *state, RawConfig &config) {
+    int type = lua_type(state, -1);
+    if (type == LUA_TSTRING) {
+        if (const auto *str = lua_tostring(state, -1)) {
+            auto l = lua_rawlen(state, -1);
+            config.setValue(std::string(str, l));
+        }
+        return;
+    }
+
+    if (type == LUA_TTABLE) {
+        /* table is in the stack at index 't' */
+        lua_pushnil(state); /* first key */
+        while (lua_next(state, -2) != 0) {
+            if (lua_type(state, -2) == LUA_TSTRING) {
+                if (const auto *str = lua_tostring(state, -2)) {
+                    if (str[0]) {
+                        luaToRawConfig(state, config[str]);
+                    } else if (lua_type(state, -1) == LUA_TSTRING) {
+                        luaToRawConfig(state, config);
+                    }
+                }
+            }
+            lua_pop(state, 1);
+        }
+    }
+}
+
+} // namespace
 
 LuaAddonState::LuaAddonState(Library *luaLibrary, const std::string &name,
                              const std::string &library, AddonManager *manager)
@@ -86,12 +161,12 @@ LuaAddonState::LuaAddonState(Library *luaLibrary, const std::string &name,
             {"UTF16ToUTF8", &LuaAddonState::UTF16ToUTF8},
             {"UTF8ToUTF16", &LuaAddonState::UTF8ToUTF16},
         };
-        auto addon = GetLuaAddonState(state);
+        auto *addon = GetLuaAddonState(state);
         luaL_newlib(addon->state_, fcitxlib);
         return 1;
     };
     auto open_fcitx = [](lua_State *state) {
-        auto s = GetLuaAddonState(state)->state_.get();
+        auto *s = GetLuaAddonState(state)->state_.get();
         if (int rv = luaL_loadstring(s, baseLua) ||
                      lua_pcallk(s, 0, LUA_MULTRET, 0, 0, nullptr);
             rv != LUA_OK) {
@@ -236,7 +311,7 @@ std::tuple<> LuaAddonState::unwatchEventImpl(int id) {
 }
 
 std::tuple<std::string> LuaAddonState::currentInputMethodImpl() {
-    auto ic = inputContext_.get();
+    auto *ic = inputContext_.get();
     if (ic) {
         return {instance_->inputMethod(ic)};
     }
@@ -244,7 +319,7 @@ std::tuple<std::string> LuaAddonState::currentInputMethodImpl() {
 }
 
 std::tuple<std::string> LuaAddonState::currentProgramImpl() {
-    auto ic = inputContext_.get();
+    auto *ic = inputContext_.get();
     if (ic) {
         return {ic->program()};
     }
@@ -253,7 +328,7 @@ std::tuple<std::string> LuaAddonState::currentProgramImpl() {
 
 std::tuple<> LuaAddonState::setCurrentInputMethodImpl(const char *str,
                                                       bool local) {
-    auto ic = inputContext_.get();
+    auto *ic = inputContext_.get();
     if (ic) {
         instance_->setCurrentInputMethod(ic, str, local);
     }
@@ -280,7 +355,7 @@ std::tuple<int> LuaAddonState::addConverterImpl(const char *function) {
                         LuaPError(rv, "lua_pcall() failed");
                         LuaPrintError(*this);
                     } else if (lua_gettop(state_) >= 1) {
-                        auto s = lua_tostring(state_, -1);
+                        const auto *s = lua_tostring(state_, -1);
                         if (s) {
                             orig = s;
                         }
@@ -296,7 +371,7 @@ std::tuple<> LuaAddonState::removeConverterImpl(int id) {
 }
 
 std::tuple<> LuaAddonState::commitStringImpl(const char *str) {
-    if (auto ic = inputContext_.get()) {
+    if (auto *ic = inputContext_.get()) {
         ic->commitString(str);
     }
     return {};
@@ -307,10 +382,8 @@ bool LuaAddonState::handleQuickPhrase(
     const QuickPhraseAddCandidateCallback &callback) {
     ScopedICSetter setter(inputContext_, ic->watch());
     bool flag = true;
-    for (auto iter = quickphraseHandler_.begin(),
-              end = quickphraseHandler_.end();
-         iter != end; ++iter) {
-        lua_getglobal(state_, iter->second.data());
+    for (auto &handler : quickphraseHandler_) {
+        lua_getglobal(state_, handler.second.data());
         lua_pushstring(state_, input.data());
         int rv = lua_pcall(state_, 1, 1, 0);
         if (rv != 0) {
@@ -330,7 +403,8 @@ bool LuaAddonState::handleQuickPhrase(
                     lua_pushinteger(state_, i);
                     /* stack, table, integer */
                     lua_gettable(state_, -2);
-                    std::string result, display;
+                    std::string result;
+                    std::string display;
                     int action;
                     if (lua_type(state_, -1) == LUA_TTABLE) {
                         lua_pushinteger(state_, 1);
@@ -380,7 +454,7 @@ std::tuple<int> LuaAddonState::addQuickPhraseHandlerImpl(const char *function) {
     if (!quickphraseCallback_ && quickphrase()) {
         quickphraseCallback_ = quickphrase()->call<IQuickPhrase::addProvider>(
             [this](InputContext *ic, const std::string &input,
-                   QuickPhraseAddCandidateCallback callback) {
+                   const QuickPhraseAddCandidateCallback &callback) {
                 return handleQuickPhrase(ic, input, callback);
             });
     }
@@ -409,7 +483,7 @@ LuaAddonState::standardPathLocateImpl(int type, const char *path,
 }
 
 std::tuple<std::string> LuaAddonState::UTF16ToUTF8Impl(const char *str) {
-    auto data = reinterpret_cast<const uint16_t *>(str);
+    const auto *data = reinterpret_cast<const uint16_t *>(str);
     std::string result;
     size_t i = 0;
     while (data[i]) {
@@ -454,57 +528,6 @@ std::tuple<std::string> LuaAddonState::UTF8ToUTF16Impl(const char *str) {
     result.push_back(0);
     return std::string(reinterpret_cast<char *>(result.data()),
                        result.size() * sizeof(uint16_t));
-}
-
-void rawConfigToLua(LuaState *state, const RawConfig &config) {
-    if (!config.hasSubItems()) {
-        lua_pushlstring(state, config.value().data(), config.value().size());
-        return;
-    }
-
-    lua_newtable(state);
-    if (!config.value().empty()) {
-        lua_pushstring(state, "");
-        lua_pushlstring(state, config.value().data(), config.value().size());
-        lua_rawset(state, -3);
-    }
-    if (config.hasSubItems()) {
-        auto options = config.subItems();
-        for (auto &option : options) {
-            auto subConfig = config.get(option);
-            lua_pushstring(state, option.data());
-            rawConfigToLua(state, *subConfig);
-            lua_rawset(state, -3);
-        }
-    }
-}
-
-void luaToRawConfig(LuaState *state, RawConfig &config) {
-    int type = lua_type(state, -1);
-    if (type == LUA_TSTRING) {
-        if (auto str = lua_tostring(state, -1)) {
-            auto l = lua_rawlen(state, -1);
-            config.setValue(std::string(str, l));
-        }
-        return;
-    }
-
-    if (type == LUA_TTABLE) {
-        /* table is in the stack at index 't' */
-        lua_pushnil(state); /* first key */
-        while (lua_next(state, -2) != 0) {
-            if (lua_type(state, -2) == LUA_TSTRING) {
-                if (auto str = lua_tostring(state, -2)) {
-                    if (str[0]) {
-                        luaToRawConfig(state, config[str]);
-                    } else if (lua_type(state, -1) == LUA_TSTRING) {
-                        luaToRawConfig(state, config);
-                    }
-                }
-            }
-            lua_pop(state, 1);
-        }
-    }
 }
 
 RawConfig LuaAddonState::invokeLuaFunction(InputContext *ic,

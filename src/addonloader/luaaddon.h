@@ -10,11 +10,14 @@
 #include "luaaddon_public.h"
 #include "luaaddonstate.h"
 #include "luahelper.h"
+#include <fcitx-config/rawconfig.h>
 #include <fcitx-utils/library.h>
 #include <fcitx/addoninfo.h>
 #include <fcitx/addoninstance.h>
 #include <fcitx/addonmanager.h>
 #include <fcitx/instance.h>
+#include <memory>
+#include <string>
 
 namespace fcitx {
 
