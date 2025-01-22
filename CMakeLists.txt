@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(fcitx5-lua VERSION 5.0.13)
+project(fcitx5-lua VERSION 5.0.14)
 
 set(REQUIRED_FCITX_VERSION 5.1.12)
 find_package(ECM REQUIRED 1.0.0)
