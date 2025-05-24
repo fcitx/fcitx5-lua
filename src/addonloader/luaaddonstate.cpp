@@ -14,7 +14,7 @@
 #include <fcitx-config/rawconfig.h>
 #include <fcitx-utils/handlertable.h>
 #include <fcitx-utils/library.h>
-#include <fcitx-utils/standardpath.h>
+#include <fcitx-utils/standardpaths.h>
 #include <fcitx-utils/stringutils.h>
 #include <fcitx-utils/trackableobject.h>
 #include <fcitx-utils/utf8.h>
@@ -23,6 +23,7 @@
 #include <fcitx/inputcontext.h>
 #include <fcitx/instance.h>
 #include <fcntl.h>
+#include <filesystem>
 #include <functional>
 #include <memory>
 #include <stdexcept>
@@ -129,8 +130,8 @@ LuaAddonState::LuaAddonState(Library *luaLibrary, const std::string &name,
         throw std::runtime_error("Failed to create lua state.");
     }
 
-    auto path = StandardPath::global().locate(
-        StandardPath::Type::PkgData,
+    auto path = StandardPaths::global().locate(
+        StandardPathsType::PkgData,
         stringutils::joinPath("lua", name, library));
     if (path.empty()) {
         throw std::runtime_error("Couldn't find lua source.");
@@ -178,7 +179,7 @@ LuaAddonState::LuaAddonState(Library *luaLibrary, const std::string &name,
     };
     luaL_requiref(state_, "fcitx.core", open_fcitx_core, false);
     luaL_requiref(state_, "fcitx", open_fcitx, false);
-    if (int rv = luaL_loadfile(state_, path.data()); rv != 0) {
+    if (int rv = luaL_loadfile(state_, path.string().c_str()); rv != 0) {
         LuaPError(rv, "luaL_loadfilex() failed");
         LuaPrintError(*this);
         throw std::runtime_error("Failed to load lua source.");
@@ -473,11 +474,14 @@ std::tuple<std::vector<std::string>>
 LuaAddonState::standardPathLocateImpl(int type, const char *path,
                                       const char *suffix) {
     std::vector<std::string> result;
-    auto files = StandardPath::global().multiOpen(
-        static_cast<StandardPath::Type>(type), path, O_RDONLY,
-        filter::Suffix(suffix));
+    auto files = StandardPaths::global().locate(
+        static_cast<StandardPathsType>(type), path,
+        [suffix](const std::filesystem::path &file) {
+            return file.string().ends_with(suffix);
+        });
+    result.reserve(files.size());
     for (const auto &file : files) {
-        result.push_back(file.second.path());
+        result.push_back(file.second.string());
     }
     return {std::move(result)};
 }

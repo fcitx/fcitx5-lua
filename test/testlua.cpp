@@ -8,26 +8,35 @@
 #include "testdir.h"
 #include "testfrontend_public.h"
 #include "testim_public.h"
+#include <cassert>
+#include <cstdint>
+#include <cstring>
+#include <fcitx-config/rawconfig.h>
 #include <fcitx-utils/eventdispatcher.h>
+#include <fcitx-utils/key.h>
+#include <fcitx-utils/keysym.h>
 #include <fcitx-utils/log.h>
-#include <fcitx-utils/standardpath.h>
+#include <fcitx-utils/macros.h>
+#include <fcitx-utils/standardpaths.h>
 #include <fcitx-utils/testing.h>
 #include <fcitx/addonmanager.h>
+#include <fcitx/event.h>
+#include <fcitx/inputmethodgroup.h>
 #include <fcitx/inputmethodmanager.h>
 #include <fcitx/instance.h>
-#include <iostream>
+#include <string>
 #include <thread>
 
 using namespace fcitx;
 
 void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
     dispatcher->schedule([instance]() {
-        auto luaaddonloader =
+        auto *luaaddonloader =
             instance->addonManager().addon("luaaddonloader", true);
         FCITX_ASSERT(luaaddonloader);
-        auto luaaddon = instance->addonManager().addon("testlua");
+        auto *luaaddon = instance->addonManager().addon("testlua");
         FCITX_ASSERT(luaaddon);
-        auto imeapi = instance->addonManager().addon("imeapi");
+        auto *imeapi = instance->addonManager().addon("imeapi");
         FCITX_ASSERT(imeapi);
     });
     dispatcher->schedule([dispatcher, instance]() {
@@ -39,9 +48,9 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         group.setDefaultInputMethod("testim");
         instance->inputMethodManager().setGroup(group);
 
-        auto testfrontend = instance->addonManager().addon("testfrontend");
-        auto testim = instance->addonManager().addon("testim");
-        auto luaaddon = instance->addonManager().addon("testlua");
+        auto *testfrontend = instance->addonManager().addon("testfrontend");
+        auto *testim = instance->addonManager().addon("testim");
+        auto *luaaddon = instance->addonManager().addon("testlua");
         testim->call<ITestIM::setHandler>(
             [](const InputMethodEntry &, KeyEvent &keyEvent) {
                 if (keyEvent.key().states() != KeyState::NoState ||
@@ -56,7 +65,7 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
             });
         auto uuid =
             testfrontend->call<ITestFrontend::createInputContext>("testapp");
-        auto ic = instance->inputContextManager().findByUUID(uuid);
+        auto *ic = instance->inputContextManager().findByUUID(uuid);
         FCITX_ASSERT(ic);
 
         // Test with the converter in test.lua
@@ -125,11 +134,10 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
 void runInstance() {}
 
 int main() {
-    setupTestingEnvironment(
-        TESTING_BINARY_DIR,
-        {"src/addonloader", StandardPath::fcitxPath("addondir")},
+    setupTestingEnvironmentPath(
+        TESTING_BINARY_DIR, {"bin"},
         {"test", TESTING_SOURCE_DIR "/test",
-         StandardPath::fcitxPath("pkgdatadir", "testing")});
+         StandardPaths::fcitxPath("pkgdatadir", "testing")});
 
     fcitx::Log::setLogRule("default=5,lua=5");
     char arg0[] = "testlua";
@@ -137,8 +145,6 @@ int main() {
     char arg2[] = "--enable=testim,testfrontend,luaaddonloader,imeapi,testlua";
     char *argv[] = {arg0, arg1, arg2};
     Instance instance(FCITX_ARRAY_SIZE(argv), argv);
-    setenv("FCITX_DATA_HOME", "/Invalid/Path", 1);
-    setenv("FCITX_CONFIG_HOME", "/Invalid/Path", 1);
     instance.addonManager().registerDefaultLoader(nullptr);
     EventDispatcher dispatcher;
     dispatcher.attach(&instance.eventLoop());

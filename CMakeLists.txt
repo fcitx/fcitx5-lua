@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(fcitx5-lua VERSION 5.0.14)
 
-set(REQUIRED_FCITX_VERSION 5.1.12)
+set(REQUIRED_FCITX_VERSION 5.1.13)
 find_package(ECM REQUIRED 1.0.0)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
@@ -18,6 +18,10 @@ find_package(Fcitx5Module REQUIRED COMPONENTS QuickPhrase)
 
 option(USE_DLOPEN "Use dlopen to load lua library." On)
 option(ENABLE_TEST "Build Test" On)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 include("${FCITX_INSTALL_CMAKECONFIG_DIR}/Fcitx5Utils/Fcitx5CompilerSettings.cmake")
 
