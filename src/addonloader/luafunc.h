@@ -1,4 +1,8 @@
+#ifdef luaL_openlibs
+FOREACH_LUA_FUNCTION(luaL_openselectedlibs)
+#else
 FOREACH_LUA_FUNCTION(luaL_openlibs)
+#endif
 FOREACH_LUA_FUNCTION(luaL_requiref)
 #ifdef lua_newuserdata
 FOREACH_LUA_FUNCTION(lua_newuserdatauv)
