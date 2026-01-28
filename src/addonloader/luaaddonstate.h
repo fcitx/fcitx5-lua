@@ -175,6 +175,12 @@ private:
     // @function commitString
     // @string str string to be commit to input context.
     DEFINE_LUA_FUNCTION(commitString);
+    /// Send a key event to client.
+    // @function forwardKey
+    // @int keySym A keySym of the key event.
+    // @int keyStates A modifier states of the key event.
+    // @boolean release Whether this is a key release event.
+    DEFINE_LUA_FUNCTION(forwardKey);
     /// Locate all files with given path and suffix.
     // @function standardPathLocate
     // @int type
@@ -230,6 +236,8 @@ private:
     standardPathLocateImpl(int type, const char *path, const char *suffix);
 
     std::tuple<> commitStringImpl(const char *str);
+    std::tuple<> forwardKeyImpl(int keySym, int keyStates, bool release);
+
     FCITX_ADDON_DEPENDENCY_LOADER(quickphrase, instance_->addonManager());
 
     bool handleQuickPhrase(InputContext *ic, const std::string &input,
