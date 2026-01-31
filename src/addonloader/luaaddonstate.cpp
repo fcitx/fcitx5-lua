@@ -158,6 +158,7 @@ LuaAddonState::LuaAddonState(Library *luaLibrary, const std::string &name,
             {"removeQuickPhraseHandler",
              &LuaAddonState::removeQuickPhraseHandler},
             {"commitString", &LuaAddonState::commitString},
+            {"forwardKey", &LuaAddonState::forwardKey},
             {"standardPathLocate", &LuaAddonState::standardPathLocate},
             {"UTF16ToUTF8", &LuaAddonState::UTF16ToUTF8},
             {"UTF8ToUTF16", &LuaAddonState::UTF8ToUTF16},
@@ -377,6 +378,15 @@ std::tuple<> LuaAddonState::commitStringImpl(const char *str) {
     }
     return {};
 }
+
+std::tuple<> LuaAddonState::forwardKeyImpl(int keySym, int keyStates, bool release) {
+    if (auto *ic = inputContext_.get()) {
+        Key key(static_cast<KeySym>(keySym), static_cast<KeyStates>(keyStates));
+        ic->forwardKey(key, release);
+    }
+    return {};
+}
+
 
 bool LuaAddonState::handleQuickPhrase(
     InputContext *ic, const std::string &input,
