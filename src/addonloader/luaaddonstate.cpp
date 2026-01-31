@@ -262,9 +262,26 @@ std::tuple<int> LuaAddonState::watchEventImpl(int eventType,
                 return 3;
             },
             [](std::unique_ptr<LuaState> &state, KeyEvent &event) {
-                auto b = lua_toboolean(state, -1);
-                if (b) {
-                    event.filterAndAccept();
+                if (lua_isinteger(state, -1)) {
+                    auto result = lua_tointeger(state, -1);
+                    switch (static_cast<KeyEventResult>(result)) {
+                    case KeyEventResult::NotHandled:
+                        break;
+                    case KeyEventResult::Handled:
+                        event.filterAndAccept();
+                        break;
+                    case KeyEventResult::Passthrough:
+                        event.filter();
+                        break;
+                    default:
+                        FCITX_LUA_ERROR()
+                            << "invalid KeyEventResult: " << result;
+                    }
+                } else {
+                    auto b = lua_toboolean(state, -1);
+                    if (b) {
+                        event.filterAndAccept();
+                    }
                 }
             });
         break;

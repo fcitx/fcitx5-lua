@@ -120,10 +120,23 @@ local oldsetCurrentInputMethod=fcitx.setCurrentInputMethod
 local function setCurrentInputMethod(name,local_im)
     if(local_im == nil) then
         local_im = false
-    end    
+    end
     oldsetCurrentInputMethod(name,local_im)
 end
 
 fcitx.setCurrentInputMethod = setCurrentInputMethod
+
+--- Result of key event handler. It represents the action to be taken
+-- after a fcitx.EventType.KeyEvent handler is executed.
+-- @table KeyEventResult
+-- @field NotHandled Let Fcitx5 continue its normal processing. Equivalent to returning `false`.
+-- @field Handled Fcitx5 handles the event and consumes it. Equivalent to returning `true`.
+-- @field Passthrough Fcitx5 will not process this event and will let it pass through to the application.
+local KeyEventResult = {
+    NotHandled = 0,
+    Handled = 1,
+    Passthrough = 2,
+}
+fcitx.KeyEventResult = KeyEventResult
 
 return fcitx
