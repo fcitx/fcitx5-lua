@@ -29,6 +29,42 @@
 
 using namespace fcitx;
 
+void testKeyEventResult(AddonInstance *testfrontend, AddonInstance *luaaddon,
+                        ICUUID uuid, InputContext *ic) {
+    auto sendKey = [&](const std::string &key) {
+        return testfrontend->call<ITestFrontend::sendKeyEvent>(uuid, Key(key),
+                                                               false);
+    };
+    auto getLastCommit = [&]() {
+        return luaaddon
+            ->call<ILuaAddon::invokeLuaFunction>(ic, "getLastCommit",
+                                                 RawConfig{})
+            .value();
+    };
+
+    // Test KeyEventResult enum values
+
+    FCITX_ASSERT(sendKey("x")) << "NotHandled: should accept the event";
+    FCITX_ASSERT(getLastCommit() == "x") << "NotHandled: should commit 'x'";
+
+    FCITX_ASSERT(sendKey("y")) << "Handled: should accept the event";
+    FCITX_ASSERT(getLastCommit() == "x") << "Handled: should still be 'x'";
+
+    FCITX_ASSERT(!sendKey("z")) << "Passthrough: should not accept the event";
+    FCITX_ASSERT(getLastCommit() == "x") << "Passthrough: should still be 'x'";
+
+    // Legacy boolean/nil return values
+
+    FCITX_ASSERT(sendKey("e")) << "false: should accept the event";
+    FCITX_ASSERT(getLastCommit() == "e") << "false: should commit 'e'";
+
+    FCITX_ASSERT(sendKey("f")) << "nil: should accept the event";
+    FCITX_ASSERT(getLastCommit() == "f") << "nil: should commit 'f'";
+
+    FCITX_ASSERT(sendKey("g")) << "true: should accept the event";
+    FCITX_ASSERT(getLastCommit() == "f") << "true: should still be 'f'";
+}
+
 void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
     dispatcher->schedule([instance]() {
         auto *luaaddonloader =
@@ -125,6 +161,8 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(
             ic, "testUtf8Conversion", strConfig);
         FCITX_ASSERT(ret.value() == testString) << ret;
+
+        testKeyEventResult(testfrontend, luaaddon, uuid, ic);
 
         dispatcher->detach();
         instance->exit();
