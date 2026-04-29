@@ -20,7 +20,14 @@
 
 namespace fcitx {
 LuaState::LuaState(Library *library)
-    : luaLibrary_(library), state_(nullptr, _fcitx_lua_close) {
+    :
+#ifdef USE_DLOPEN
+      luaLibrary_(library),
+#endif
+      state_(nullptr, _fcitx_lua_close) {
+#ifndef USE_DLOPEN
+    FCITX_UNUSED(library);
+#endif
     // Resolve all required lua function first.
 #define FOREACH_LUA_FUNCTION(NAME)                                             \
     FILL_LUA_API(NAME);                                                        \

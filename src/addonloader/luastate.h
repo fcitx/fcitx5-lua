@@ -7,6 +7,7 @@
 #ifndef _FCITX5_LUA_ADDONLOADER_LUASTATE_H_
 #define _FCITX5_LUA_ADDONLOADER_LUASTATE_H_
 
+#include "config.h"
 #include "luastate_details.h"
 #include <fcitx-utils/library.h>
 #include <functional>
@@ -29,7 +30,9 @@ public:
     }
 
 private:
+#ifdef USE_DLOPEN
     Library *luaLibrary_;
+#endif
 
 #define FOREACH_LUA_FUNCTION DECLARE_LUA_FUNCTION_PTR
 #include "luafunc.h"
