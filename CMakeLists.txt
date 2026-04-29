@@ -90,7 +90,7 @@ endif()
 
 configure_file(config.h.in config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_definitions(-DFCITX_GETTEXT_DOMAIN=\"fcitx5-lua\")
+add_definitions("-DFCITX_GETTEXT_DOMAIN=\"fcitx5-lua\"")
 fcitx5_add_i18n_definition()
 
 add_subdirectory(src)

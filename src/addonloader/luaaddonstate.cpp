@@ -13,7 +13,6 @@
 #include <cstdint>
 #include <fcitx-config/rawconfig.h>
 #include <fcitx-utils/handlertable.h>
-#include <fcitx-utils/library.h>
 #include <fcitx-utils/standardpaths.h>
 #include <fcitx-utils/stringutils.h>
 #include <fcitx-utils/trackableobject.h>
@@ -122,7 +121,7 @@ void luaToRawConfig(LuaState *state, RawConfig &config) {
 
 } // namespace
 
-LuaAddonState::LuaAddonState(Library *luaLibrary, const std::string &name,
+LuaAddonState::LuaAddonState(LibraryPtr luaLibrary, const std::string &name,
                              const std::string &library, AddonManager *manager)
     : instance_(manager->instance()),
       state_(std::make_unique<LuaState>(luaLibrary)) {

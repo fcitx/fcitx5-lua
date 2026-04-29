@@ -7,12 +7,12 @@
 #ifndef _FCITX5_LUA_ADDONLOADER_LUAADDONSTATE_H_
 #define _FCITX5_LUA_ADDONLOADER_LUAADDONSTATE_H_
 
+#include "config.h"
 #include "luahelper.h"
 #include "luastate.h"
 #include <exception>
 #include <fcitx-config/rawconfig.h>
 #include <fcitx-utils/handlertable.h>
-#include <fcitx-utils/library.h>
 #include <fcitx-utils/macros.h>
 #include <fcitx-utils/signals.h>
 #include <fcitx-utils/stringutils.h>
@@ -97,7 +97,7 @@ private:
 
 class LuaAddonState {
 public:
-    LuaAddonState(Library *luaLibrary, const std::string &name,
+    LuaAddonState(LibraryPtr luaLibrary, const std::string &name,
                   const std::string &library, AddonManager *manager);
 
     operator LuaState *() { return state_.get(); }
