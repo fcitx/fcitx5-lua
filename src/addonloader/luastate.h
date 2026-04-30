@@ -7,8 +7,8 @@
 #ifndef _FCITX5_LUA_ADDONLOADER_LUASTATE_H_
 #define _FCITX5_LUA_ADDONLOADER_LUASTATE_H_
 
+#include "config.h"
 #include "luastate_details.h"
-#include <fcitx-utils/library.h>
 #include <functional>
 #include <lua.hpp> // IWYU pragma: export
 #include <memory>
@@ -17,7 +17,7 @@ namespace fcitx {
 
 struct LuaState {
 public:
-    LuaState(Library *library);
+    LuaState(LibraryPtr library);
 
 #define FOREACH_LUA_FUNCTION DEFINE_LUA_API_FUNCTION
 #include "luafunc.h"
@@ -29,7 +29,7 @@ public:
     }
 
 private:
-    Library *luaLibrary_;
+    LibraryPtr luaLibrary_ [[maybe_unused]];
 
 #define FOREACH_LUA_FUNCTION DECLARE_LUA_FUNCTION_PTR
 #include "luafunc.h"

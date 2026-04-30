@@ -7,7 +7,23 @@
 #ifndef _FCITX5_LUA_CONFIG_H_
 #define _FCITX5_LUA_CONFIG_H_
 
+
 #cmakedefine LUA_LIBRARY_PATH "@LUA_LIBRARY_PATH@"
 #cmakedefine USE_DLOPEN
+
+#ifdef USE_DLOPEN
+#include <fcitx-utils/library.h>
+#else
+#include <cstddef>
+#endif
+
+namespace fcitx {
+#ifdef USE_DLOPEN
+using LibraryPtr = fcitx::Library*;
+#else
+using LibraryPtr = std::nullptr_t;
+#endif
+
+}
 
 #endif // _FCITX5_LUA_CONFIG_H_

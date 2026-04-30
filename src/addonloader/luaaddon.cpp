@@ -5,11 +5,11 @@
  *
  */
 #include "luaaddon.h"
+#include "config.h"
 #include "luaaddonstate.h"
 #include "luahelper.h"
 #include <exception>
 #include <fcitx-config/rawconfig.h>
-#include <fcitx-utils/library.h>
 #include <fcitx/addoninfo.h>
 #include <fcitx/inputcontext.h>
 #include <memory>
@@ -18,7 +18,7 @@
 
 namespace fcitx {
 
-LuaAddon::LuaAddon(Library *luaLibrary, const AddonInfo &info,
+LuaAddon::LuaAddon(LibraryPtr luaLibrary, const AddonInfo &info,
                    AddonManager *manager)
     : instance_(manager->instance()), name_(info.uniqueName()),
       library_(info.library()), state_(std::make_unique<LuaAddonState>(
