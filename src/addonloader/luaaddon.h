@@ -7,11 +7,11 @@
 #ifndef _FCITX5_LUA_ADDONLOADER_LUAADDON_H_
 #define _FCITX5_LUA_ADDONLOADER_LUAADDON_H_
 
+#include "config.h"
 #include "luaaddon_public.h"
 #include "luaaddonstate.h"
 #include "luahelper.h"
 #include <fcitx-config/rawconfig.h>
-#include <fcitx-utils/library.h>
 #include <fcitx/addoninfo.h>
 #include <fcitx/addoninstance.h>
 #include <fcitx/addonmanager.h>
@@ -25,7 +25,8 @@ class AddonManager;
 
 class LuaAddon : public AddonInstance {
 public:
-    LuaAddon(Library *luaLibrary, const AddonInfo &info, AddonManager *manager);
+    LuaAddon(LibraryPtr luaLibrary, const AddonInfo &info,
+             AddonManager *manager);
 
     void reloadConfig() override;
 
@@ -39,7 +40,7 @@ private:
     const std::string library_;
 
     std::unique_ptr<LuaAddonState> state_;
-    Library *luaLibrary_;
+    LibraryPtr luaLibrary_;
 };
 
 } // namespace fcitx

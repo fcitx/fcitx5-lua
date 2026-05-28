@@ -7,7 +7,6 @@
 #include "luastate.h"
 #include "config.h"
 #include "luahelper.h"
-#include <fcitx-utils/library.h>
 #include <stdexcept>
 
 #ifdef USE_DLOPEN
@@ -19,7 +18,7 @@
 #define FILL_LUA_API(FUNCTION) FUNCTION##_ = GET_LUA_API(FUNCTION)
 
 namespace fcitx {
-LuaState::LuaState(Library *library)
+LuaState::LuaState(LibraryPtr library)
     : luaLibrary_(library), state_(nullptr, _fcitx_lua_close) {
     // Resolve all required lua function first.
 #define FOREACH_LUA_FUNCTION(NAME)                                             \

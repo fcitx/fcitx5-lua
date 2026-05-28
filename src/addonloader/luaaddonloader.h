@@ -7,13 +7,16 @@
 #ifndef _FCITX5_LUA_ADDONLOADER_LUAADDONLOADER_H_
 #define _FCITX5_LUA_ADDONLOADER_LUAADDONLOADER_H_
 
-#include <fcitx-utils/library.h>
+#include "config.h"
 #include <fcitx/addonfactory.h>
 #include <fcitx/addoninfo.h>
 #include <fcitx/addoninstance.h>
 #include <fcitx/addonloader.h>
-#include <memory>
 #include <string>
+
+#ifdef USE_DLOPEN
+#include <memory>
+#endif
 
 namespace fcitx {
 
@@ -23,8 +26,14 @@ public:
     std::string type() const override { return "Lua"; }
     AddonInstance *load(const AddonInfo &info, AddonManager *manager) override;
 
+#ifdef USE_DLOPEN
+    LibraryPtr luaLibrary() const { return luaLibrary_.get(); }
+
 private:
     std::unique_ptr<Library> luaLibrary_;
+#else
+    LibraryPtr luaLibrary() const { return nullptr; }
+#endif
 };
 
 class LuaAddonLoaderAddon : public AddonInstance {

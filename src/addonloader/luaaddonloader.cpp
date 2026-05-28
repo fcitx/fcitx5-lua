@@ -5,12 +5,10 @@
  *
  */
 #include "luaaddonloader.h"
-#include "config.h"
 #include "luaaddon.h"
 #include "luahelper.h"
 #include "luastate.h"
 #include <exception>
-#include <fcitx-utils/library.h>
 #include <fcitx/addoninfo.h>
 #include <fcitx/addoninstance.h>
 #include <fcitx/addonmanager.h>
@@ -52,7 +50,7 @@ LuaAddonLoader::LuaAddonLoader() {
     }
 
     // Create test state to ensure the function can be resolved.
-    LuaState testState(luaLibrary_.get());
+    LuaState testState(luaLibrary());
 }
 
 AddonInstance *LuaAddonLoader::load(const AddonInfo &info,
@@ -65,7 +63,7 @@ AddonInstance *LuaAddonLoader::load(const AddonInfo &info,
     if (info.category() == AddonCategory::Module) {
         try {
             auto addon =
-                std::make_unique<LuaAddon>(luaLibrary_.get(), info, manager);
+                std::make_unique<LuaAddon>(luaLibrary(), info, manager);
             return addon.release();
         } catch (const std::exception &e) {
             FCITX_LUA_ERROR() << "Loading lua addon " << info.uniqueName()
