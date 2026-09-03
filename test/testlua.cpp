@@ -36,8 +36,6 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         FCITX_ASSERT(luaaddonloader);
         auto *luaaddon = instance->addonManager().addon("testlua");
         FCITX_ASSERT(luaaddon);
-        auto *imeapi = instance->addonManager().addon("imeapi");
-        FCITX_ASSERT(imeapi);
     });
     dispatcher->schedule([dispatcher, instance]() {
         // Setup the input method group with two input method
@@ -51,6 +49,8 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         auto *testfrontend = instance->addonManager().addon("testfrontend");
         auto *testim = instance->addonManager().addon("testim");
         auto *luaaddon = instance->addonManager().addon("testlua");
+        auto *imeapi = instance->addonManager().addon("imeapi");
+        FCITX_ASSERT(imeapi);
         testim->call<ITestIM::setHandler>(
             [](const InputMethodEntry &, KeyEvent &keyEvent) {
                 if (keyEvent.key().states() != KeyState::NoState ||
@@ -125,6 +125,39 @@ void scheduleEvent(EventDispatcher *dispatcher, Instance *instance) {
         ret = luaaddon->call<ILuaAddon::invokeLuaFunction>(
             ic, "testUtf8Conversion", strConfig);
         FCITX_ASSERT(ret.value() == testString) << ret;
+
+        RawConfig cloudPinyinRequest;
+        cloudPinyinRequest["provider"].setValue("");
+        cloudPinyinRequest["pinyin"].setValue("ni'hao");
+        cloudPinyinRequest["input"].setValue("nih");
+        cloudPinyinRequest["selected"].setValue("测");
+        cloudPinyinRequest["first"].setValue("你好");
+        cloudPinyinRequest["before"].setValue("before");
+        cloudPinyinRequest["after"].setValue("after");
+        cloudPinyinRequest["program"].setValue("testapp");
+        cloudPinyinRequest["session"].setValue("0123456789abcdef");
+        ret = imeapi->call<ILuaAddon::invokeLuaFunction>(
+            ic, "cloudPinyinRequest", cloudPinyinRequest);
+        FCITX_ASSERT(*ret.valueByPath("url") ==
+                     "https://example.invalid/pinyin");
+        FCITX_ASSERT(*ret.valueByPath("method") == "POST");
+        FCITX_ASSERT(*ret.valueByPath("headers/Content-Type") ==
+                     "application/json");
+        FCITX_ASSERT(*ret.valueByPath("headers/X-Program") == "testapp");
+        FCITX_ASSERT(*ret.valueByPath("headers/X-Session") ==
+                     "0123456789abcdef");
+        FCITX_ASSERT(*ret.valueByPath("timeout") == "5");
+        FCITX_ASSERT(*ret.valueByPath("body") ==
+                     "ni'hao|nih|测|你好|before|after");
+
+        RawConfig cloudPinyinResponse;
+        cloudPinyinResponse["provider"].setValue("");
+        cloudPinyinResponse["response"]["status"].setValue("200");
+        cloudPinyinResponse["response"]["body"].setValue("response");
+        ret = imeapi->call<ILuaAddon::invokeLuaFunction>(
+            ic, "cloudPinyinResponse", cloudPinyinResponse);
+        FCITX_ASSERT(*ret.valueByPath("text") == "response");
+        FCITX_ASSERT(*ret.valueByPath("comment") == "test comment");
 
         dispatcher->detach();
         instance->exit();

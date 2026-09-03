@@ -93,10 +93,10 @@ void rawConfigToLua(LuaState *state, const RawConfig &config) {
 
 void luaToRawConfig(LuaState *state, RawConfig &config) {
     int type = lua_type(state, -1);
-    if (type == LUA_TSTRING) {
-        if (const auto *str = lua_tostring(state, -1)) {
-            auto l = lua_rawlen(state, -1);
-            config.setValue(std::string(str, l));
+    if (type == LUA_TSTRING || type == LUA_TNUMBER) {
+        std::size_t length;
+        if (const auto *str = lua_tolstring(state, -1, &length)) {
+            config.setValue(std::string(str, length));
         }
         return;
     }
@@ -109,7 +109,8 @@ void luaToRawConfig(LuaState *state, RawConfig &config) {
                 if (const auto *str = lua_tostring(state, -2)) {
                     if (str[0]) {
                         luaToRawConfig(state, config[str]);
-                    } else if (lua_type(state, -1) == LUA_TSTRING) {
+                    } else if (lua_type(state, -1) == LUA_TSTRING ||
+                               lua_type(state, -1) == LUA_TNUMBER) {
                         luaToRawConfig(state, config);
                     }
                 }
