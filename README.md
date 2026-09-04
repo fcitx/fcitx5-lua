@@ -12,7 +12,8 @@ It tries to support lua in fcitx in two ways.
    lua file under $HOME/.local/share/fcitx5/lua/imeapi/extensions to make the
    addon find your scripts.
 
-### Cloud Pinyin providers
+Cloud Pinyin providers
+----------------------
 
 `ime.cloudpinyin_provider_api_version` is `1`.
 Extensions may register a provider for the Cloud Pinyin addon's `Lua` backend:
@@ -46,13 +47,15 @@ The request callback receives a context table. Its `pinyin` field contains full 
 
 `selected` contains the text already selected in the current input.
 
-`first` contains the Pinyin engine's preferred candidate before custom, cloud,or Lua candidates are added.
+`first` contains the Pinyin engine's preferred candidate before custom, cloud, or Lua candidates are added.
 
 When the frontend supplies surrounding text, `before` and `after` contain the text around the cursor.
 
 `program` is the client program name and `session` is the input context UUID encoded as 32 lowercase hexadecimal characters; both are empty for the legacy request API without an input context.
 
 The request table may specify `timeout` as a whole number of seconds from 1 to 60; it defaults to 10 seconds.
+
+`body` requires a non-GET `method`; a GET request with a non-empty body is rejected.
 
 The response callback receives numeric `status`, `headers`, and `body`, then returns a candidate table or `nil`.
 
