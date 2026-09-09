@@ -15,6 +15,9 @@ ime = {}
 local state = {}
 local commands = {}
 local triggers = {}
+local cloudpinyin_providers = {}
+local cloudpinyin_provider_order = {}
+ime.cloudpinyin_provider_api_version = 1
 
 local function starts_with(str, start)
     return str:sub(1, #start) == start
@@ -169,6 +172,95 @@ function ime.register_trigger(
 )
     registerQuickPhrase()
     table.insert(triggers, {func = lua_function_name, description = description, input_trigger_strings = input_trigger_strings, candidate_trigger_strings = candidate_trigger_strings})
+end
+
+---
+-- Register an HTTP provider for the Cloud Pinyin addon.
+--
+-- The request callback receives a context table containing pinyin, raw input,
+-- selected text, the engine's preferred candidate, program, session, and
+-- optional surrounding text fields. It returns a table with a URL, optional
+-- HTTP method, headers, body, and timeout in seconds. The response callback
+-- receives a table containing the HTTP status, headers, and body and returns a
+-- candidate table with required text and optional comment fields, or nil.
+function ime.register_cloudpinyin_provider(
+    name,
+    request_callback,
+    response_callback
+)
+    if type(name) ~= "string" or name == "" then
+        fcitx.log("Cloud Pinyin provider name must be a non-empty string")
+        return false
+    end
+    if type(request_callback) ~= "function" or type(response_callback) ~= "function" then
+        fcitx.log("Cloud Pinyin provider callbacks must be functions")
+        return false
+    end
+    if cloudpinyin_providers[name] ~= nil then
+        fcitx.log("Cloud Pinyin provider already registered: " .. name)
+        return false
+    end
+    cloudpinyin_providers[name] = {
+        request = request_callback,
+        response = response_callback,
+    }
+    table.insert(cloudpinyin_provider_order, name)
+    return true
+end
+
+local function cloudpinyin_provider(name)
+    if name == "" then
+        name = cloudpinyin_provider_order[1]
+    end
+    if name == nil then
+        return nil, nil
+    end
+    return cloudpinyin_providers[name], name
+end
+
+function cloudPinyinRequest(config)
+    if type(config) ~= "table" or type(config.provider) ~= "string" or
+        type(config.pinyin) ~= "string" or type(config.input) ~= "string" or
+        type(config.first) ~= "string" then
+        return nil
+    end
+    local provider, name = cloudpinyin_provider(config.provider)
+    if provider == nil then
+        fcitx.log("Cloud Pinyin provider is not registered: " .. (name or "default"))
+        return nil
+    end
+    return provider.request(config)
+end
+
+function cloudPinyinResponse(config)
+    if type(config) ~= "table" or type(config.provider) ~= "string" or
+        type(config.response) ~= "table" then
+        return nil
+    end
+    local provider, name = cloudpinyin_provider(config.provider)
+    if provider == nil then
+        fcitx.log("Cloud Pinyin provider is not registered: " .. (name or "default"))
+        return nil
+    end
+    local status = tonumber(config.response.status)
+    if status == nil then
+        fcitx.log("Cloud Pinyin response status must be a number")
+        return nil
+    end
+    config.response.status = status
+    local candidate = provider.response(config.response)
+    if candidate == nil then
+        return nil
+    end
+    if type(candidate) ~= "table" or type(candidate.text) ~= "string" then
+        fcitx.log("Cloud Pinyin provider response must be a candidate table with text")
+        return nil
+    end
+    if candidate.comment ~= nil and type(candidate.comment) ~= "string" then
+        fcitx.log("Cloud Pinyin candidate comment must be a string")
+        return nil
+    end
+    return candidate
 end
 
 --- Register a converter
