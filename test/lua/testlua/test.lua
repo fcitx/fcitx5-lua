@@ -56,3 +56,27 @@ end
 function testUtf8Conversion(str)
     return fcitx.UTF16ToUTF8(str)
 end
+
+function getLastCommit()
+    return fcitx.lastCommit()
+end
+
+fcitx.watchEvent(fcitx.EventType.KeyEvent, "testKeyEventResultHandler")
+
+function testKeyEventResultHandler(sym, state, release)
+    local key = string.char(sym)
+    if key == "x" then
+        return fcitx.KeyEventResult.NotHandled
+    elseif key == "y" then
+        return fcitx.KeyEventResult.Handled
+    elseif key == "z" then
+        return fcitx.KeyEventResult.Passthrough
+    elseif key == "e" then
+        return false
+    elseif key == "f" then
+        return
+    elseif key == "g" then
+        return true
+    end
+    return fcitx.KeyEventResult.NotHandled
+end

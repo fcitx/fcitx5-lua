@@ -95,6 +95,12 @@ private:
     ScopedConnection connection_;
 };
 
+enum class KeyEventResult {
+    NotHandled,
+    Handled,
+    Passthrough,
+};
+
 class LuaAddonState {
 public:
     LuaAddonState(LibraryPtr luaLibrary, const std::string &name,
