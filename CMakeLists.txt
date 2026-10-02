@@ -59,7 +59,7 @@ if (NOT TARGET Lua::_LuaLibrary)
     if (USE_DLOPEN)
         add_library(Lua::_LuaLibrary IMPORTED INTERFACE)
         set_target_properties(Lua::_LuaLibrary PROPERTIES
-            INTERFACE_INCLUDE_DIRECTORIES ${FCITX_LUA_HEADER_DIRS})
+            INTERFACE_INCLUDE_DIRECTORIES "${FCITX_LUA_HEADER_DIRS}")
     else()
         add_library(Lua::_LuaLibrary ALIAS ${LUA_TARGET})
     endif()
